@@ -1,39 +1,54 @@
-# 💻 Bilgrandov's Tech Corner
+# 📝 Bilgrandov — Engineer's Field Notes
 
-A retro Windows XP-inspired interactive portfolio designed and developed from scratch by **Bilgrandov**. This project demonstrates a strong foundation in Front-End engineering, dynamic DOM manipulation, and modern web data architectures without relying on heavy UI frameworks.
+A professional, creative, and minimal portfolio website styled as a handwritten developer's notebook ("Field Notes"). This project demonstrates a strong foundation in Front-End engineering, dynamic DOM manipulation, database integrations, and clean code layout without relying on heavy frameworks.
 
 ## 🌟 Key Features
-- **Retro Windows XP UI/UX**: Authentic taskbar, draggable-style windows, and CRT monitor visual effects.
-- **Dynamic File Explorer**: The Projects and Posts pages use asynchronous JavaScript to fetch and render data from local JSON/Markdown databases dynamically.
-- **Client-Side PDF Generation**: Projects can be exported to a beautifully formatted, landscape presentation PDF directly from the browser using `jsPDF` and HTML5 Canvas.
-- **Markdown Blog Engine**: An integrated, lightweight journaling system using `marked.js` to parse `.md` files into clean HTML.
-- **Fully Responsive**: Adapts seamlessly from desktop monitors down to mobile screens using pure CSS Flexbox and Grid.
+- **Field Notes Aesthetic**: Clean document-centric design with a cream/ink paper palette, handwriting accents, elegant typewriter fonts, and a custom theme switcher (Light & Dark modes).
+- **Supabase Blog Integration**: Dynamically fetches and displays real-time posts from a remote PostgreSQL Supabase database, featuring title search and client-side SessionStorage caching.
+- **Dynamic File Explorer**: The Projects and Posts page sidebars use tree-based navigation to explore records without reloading the page.
+- **Client-Side PDF Generation**: Projects can be exported to a beautifully formatted landscape scrapbook PDF directly from the browser using `jsPDF` and HTML5 Canvas.
+- **Markdown Rendering**: Articles use `marked.js` to render raw `.md` files dynamically.
+- **Fully Responsive & Accessible**: Adapts seamlessly to all viewport sizes using pure CSS Flexbox and Grid, with keyboard navigation (`tabindex`, `role="button"`) and screen reader optimizations.
 
 ## 🛠️ Technology Stack
-- **HTML5** (Semantic structure & Accessibility)
-- **CSS3** (Custom Properties, Flexbox, Grid, CSS Animations)
-- **Vanilla JavaScript** (ES6+, Fetch API, Promises, Async/Await)
-- **jsPDF & HTML5 Canvas** (Dynamic PDF rendering with base64 embedded images)
+- **HTML5** (Semantic structure & WCAG Accessibility)
+- **CSS3** (Custom Properties, Flexbox, Grid, CSS Transitions)
+- **Vanilla JavaScript** (ES6+, Fetch API, sessionStorage caching)
+- **Supabase** (PostgreSQL cloud database integration)
+- **jsPDF & HTML5 Canvas** (Scrapbook PDF generation)
 - **Marked.js** (Markdown parsing)
 
 ## 🚀 Getting Started
 
-To view this project locally, simply clone the repository. Because the project uses the Javascript `fetch()` API to load JSON and Markdown data, **it must be run through a local web server** (opening the HTML file directly via `file://` will cause CORS errors).
+Because the project fetches data dynamically from JSON databases and external APIs, **it must be run through a local web server** (opening HTML files directly via `file://` will block AJAX requests).
+
+### Installation & Run
 
 ```bash
-# Clone the repository
-git clone https://github.com/Bilgrandov/myPortfolio.git
+# 1. Clone this repository
+git clone https://github.com/Bilgrandov/bilgrandov.github.io.git
 
-# Navigate into the directory
-cd myPortfolio
+# 2. Enter directory
+cd bilgrandov.github.io
 
-# Start a local server (Example using PHP, or you can use VSCode Live Server)
+# 3. Create your Supabase config file
+# Copy supabase.config.example.js to supabase.config.js and add your project keys:
+cp supabase.config.example.js supabase.config.js
+
+# 4. Start a local server (Example using PHP, or Python, or VSCode Live Server)
 php -S localhost:8000
 ```
 Then visit `http://localhost:8000` in your browser.
 
-## 👨‍💻 About the Developer
-I am **Bilgrandov**, a Fullstack Developer and Software Engineer currently on a self-driven training arc. I built this portfolio not just as a gallery, but as a technical playground to document my raw learning journey and solidify my foundational engineering skills.
+## 📁 File Structure
+- `index.html` — Main profile page / front sheet
+- `skills.html` — Technical skills catalog
+- `projects.html` — Selected works archive & PDF generator
+- `posts.html` — Blog & learning journal explorer
+- `contact.html` — Work preferences & contact info
+- `style.css` — Central responsive styling system & theme definitions
+- `script.js` — Core client-side controller logic
+- `data/` — Local JSON databases (`projects.json`, `skills.json`)
 
 ---
-*Made with ♡ & HTML*
+*Compiled by Bilgrandov — Always Learning 🌿*

@@ -9,11 +9,38 @@ document.addEventListener('DOMContentLoaded', () => {
   initStatCounters();
   initPosts();
   initLatestPostsTeaser();
-  initAdminMode();
   initThemeSwitcher();
   initSkills();
   initGuestbook();
 });
+
+/**
+ * Escapes HTML special characters to prevent XSS.
+ */
+function escapeHTML(str) {
+  if (!str) return '';
+  return str.replace(/[&<>'"]/g, 
+    tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag] || tag)
+  );
+}
+
+/**
+ * Formats the current date as "YYYY-MM-DD HH:MM".
+ */
+function formatNow() {
+  const now = new Date();
+  return now.getFullYear() + "-" +
+    String(now.getMonth() + 1).padStart(2, '0') + "-" +
+    String(now.getDate()).padStart(2, '0') + " " +
+    String(now.getHours()).padStart(2, '0') + ":" +
+    String(now.getMinutes()).padStart(2, '0');
+}
 
 /**
  * Initializes the mobile hamburger navigation.
@@ -74,34 +101,61 @@ function initClock() {
     el.textContent = h + ':' + m;
   }
   update();
-  setInterval(update, 30000);
+  setInterval(update, 10000);
 }
 
 /**
  * Initializes the stat counter animation on the homepage.
  * Uses IntersectionObserver to trigger animation when scrolled into view.
  */
+let allProjectsData = null;
+
+/**
+ * Fetches projects and caches them in sessionStorage.
+ */
+async function ensureProjectsFetched() {
+  if (allProjectsData) return allProjectsData;
+  const cached = sessionStorage.getItem('techcorner_projects_cache');
+  if (cached) {
+    try {
+      allProjectsData = JSON.parse(cached);
+      return allProjectsData;
+    } catch (e) {
+      console.warn('Failed to parse cached projects, fetching fresh data.');
+    }
+  }
+
+  try {
+    const response = await fetch('data/projects.json');
+    if (response.ok) {
+      allProjectsData = await response.json();
+      sessionStorage.setItem('techcorner_projects_cache', JSON.stringify(allProjectsData));
+    }
+  } catch (err) {
+    console.error('Failed to fetch projects database:', err);
+    allProjectsData = [];
+  }
+  return allProjectsData || [];
+}
+
 async function initStatCounters() {
   const stats = document.querySelectorAll('.stat-num[data-count]');
   if (!stats.length) return;
 
-  // Dynamically fetch projects count from JSON database
+  // Dynamically fetch projects count from cached JSON database
   try {
-    const response = await fetch('data/projects.json');
-    if (response.ok) {
-      const projects = await response.json();
-      // Update by data-count attribute on Projects labels
-      stats.forEach(el => {
-        const label = el.closest('.stat-item')?.querySelector('.stat-label')?.textContent?.trim().toLowerCase();
-        if (label && label.includes('project')) {
-          el.setAttribute('data-count', projects.length);
-        }
-      });
-      // Also update stat-projects by ID if present
-      const statProjects = document.getElementById('stat-projects');
-      if (statProjects) {
-        statProjects.setAttribute('data-count', projects.length);
+    const projects = await ensureProjectsFetched();
+    // Update by data-count attribute on Projects labels
+    stats.forEach(el => {
+      const label = el.closest('.stat-item')?.querySelector('.stat-label')?.textContent?.trim().toLowerCase();
+      if (label && label.includes('project')) {
+        el.setAttribute('data-count', projects.length);
       }
+    });
+    // Also update stat-projects by ID if present
+    const statProjects = document.getElementById('stat-projects');
+    if (statProjects) {
+      statProjects.setAttribute('data-count', projects.length);
     }
   } catch (err) {
     console.warn('Failed to fetch dynamic projects count for homepage:', err);
@@ -311,7 +365,7 @@ async function initPosts() {
             item.innerHTML = `
               <div>
                 <span class="post-cat-badge post-cat-${p.type.toUpperCase()}">${p.type.toUpperCase()}</span>
-                <div class="post-index-title">${p.title}</div>
+                <div class="post-index-title">${escapeHTML(p.title)}</div>
               </div>
               <div class="post-index-meta">${p.date}</div>`;
             item.onclick = () => window.location.hash = `post-${p.id}`;
@@ -482,7 +536,7 @@ async function initLatestPostsTeaser() {
     div.innerHTML = `
       <div>
         <span class="post-cat-badge post-cat-${p.type.toUpperCase()}">${p.type.toUpperCase()}</span>
-        <div class="latest-post-title">${p.title}</div>
+        <div class="latest-post-title">${escapeHTML(p.title)}</div>
       </div>
       <div class="latest-post-meta">${p.date}</div>
     `;
@@ -495,139 +549,7 @@ async function initLatestPostsTeaser() {
   if (footerCount) footerCount.textContent = allPostsData.length;
 }
 
-/**
- * Initializes the hidden Admin Mode.
- * Unlocks the post composer via keyboard shortcut (Ctrl + Shift + L) and password validation.
- */
-function initAdminMode() {
-  const PASS_HASH = '87fd4d3bdc50aaf7435056df8f56d21efcfeb9da7305090ed09d1ff62f66aa6c';
-  async function sha256(message) {
-    const msgUint8 = new TextEncoder().encode(message);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  }
 
-  // Session check on load
-  const isAdmin = sessionStorage.getItem('admin_session') === 'true';
-  const compose = document.getElementById('admin-compose-window');
-
-  if (isAdmin && compose) {
-    compose.classList.remove('hidden');
-    compose.removeAttribute('hidden');
-    compose.style.display = 'block'; // Fallback if hidden class isn't enough
-  }
-
-  // Hidden Keyboard Shortcut (Ctrl + Shift + L)
-  const loginModal = document.getElementById('login-modal');
-  const loginPass = document.getElementById('admin-password');
-  const loginError = document.getElementById('login-error');
-
-  document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'l') {
-      if (loginModal) {
-        loginModal.classList.remove('hidden');
-        if (loginPass) {
-          loginPass.value = '';
-          setTimeout(() => loginPass.focus(), 50);
-        }
-        if (loginError) loginError.classList.add('hidden');
-      }
-    }
-  });
-
-  const closeLogin = () => {
-    if (loginModal) loginModal.classList.add('hidden');
-    if (loginPass) loginPass.value = '';
-    if (loginError) loginError.classList.add('hidden');
-  };
-
-  const submitLogin = async () => {
-    if (!loginPass) return;
-    const hash = await sha256(loginPass.value);
-    if (hash === PASS_HASH) {
-      sessionStorage.setItem('admin_session', 'true');
-      closeLogin();
-      alert("Access Granted: Admin Mode Activated");
-      if (compose) {
-        compose.classList.remove('hidden');
-        compose.removeAttribute('hidden');
-        compose.style.display = 'block';
-      }
-    } else {
-      if (loginError) loginError.classList.remove('hidden');
-    }
-  };
-
-  const btnCloseLogin = document.getElementById('close-login');
-  const btnCancelLogin = document.getElementById('login-cancel');
-  const btnSubmitLogin = document.getElementById('login-submit');
-
-  if (btnCloseLogin) btnCloseLogin.addEventListener('click', closeLogin);
-  if (btnCancelLogin) btnCancelLogin.addEventListener('click', closeLogin);
-  if (btnSubmitLogin) btnSubmitLogin.addEventListener('click', submitLogin);
-  if (loginPass) {
-    loginPass.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') submitLogin();
-    });
-  }
-
-  // Post Composer Logic
-  const btnSubmit = document.getElementById('post-submit');
-  const btnClear = document.getElementById('post-clear');
-  const btnCopy = document.getElementById('copy-json-btn');
-  const jsonContainer = document.getElementById('json-output-container');
-  const jsonOutput = document.getElementById('json-output');
-
-  if (btnSubmit) {
-    btnSubmit.addEventListener('click', () => {
-      const title = document.getElementById('post-title').value;
-      const content = document.getElementById('post-content').value;
-      if (!title || !content) return alert("Error: Title and Content are required.");
-
-      const now = new Date();
-      const dateStr = now.getFullYear() + "-" +
-        String(now.getMonth() + 1).padStart(2, '0') + "-" +
-        String(now.getDate()).padStart(2, '0') + " " +
-        String(now.getHours()).padStart(2, '0') + ":" +
-        String(now.getMinutes()).padStart(2, '0');
-
-      const postObj = {
-        id: Date.now(), // Generate unique ID
-        type: "blog",
-        title: title,
-        date: dateStr,
-        content: content
-      };
-
-      jsonOutput.value = "  " + JSON.stringify(postObj, null, 2).replace(/\n/g, "\n  ") + ",\n";
-      if (jsonContainer) jsonContainer.classList.remove('hidden');
-    });
-  }
-
-  if (btnClear) {
-    btnClear.addEventListener('click', () => {
-      document.getElementById('post-title').value = '';
-      document.getElementById('post-content').value = '';
-      if (jsonOutput) jsonOutput.value = '';
-      if (jsonContainer) jsonContainer.classList.add('hidden');
-    });
-  }
-
-  if (btnCopy) {
-    btnCopy.addEventListener('click', () => {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(jsonOutput.value).then(() => {
-          alert("JSON array item copied correctly! Paste it at the top of your data/posts.json array.");
-        });
-      } else {
-        jsonOutput.select();
-        document.execCommand('copy');
-        alert("JSON array item copied correctly! Paste it at the top of your data/posts.json array.");
-      }
-    });
-  }
-}
 
 /**
  * Initializes the theme switcher toggle (Light/Dark mode).
@@ -662,46 +584,13 @@ function initThemeSwitcher() {
 
 /* CRT config removed — not used in new design */
 
-const skillCategories = [
-  {
-    name: "Front-End",
-    icon: "🎨",
-    skills: [
-      { id: "skill-html", name: "HTML5", icon: '<i class="devicon-html5-plain colored" style="font-size: 32px;"></i>', level: 90, desc: "The foundational markup language of the web. I use semantic HTML5 elements to structure code clearly for SEO, accessibility (screen readers), and long-term maintainability." },
-      { id: "skill-css", name: "CSS3", icon: '<i class="devicon-css3-plain colored" style="font-size: 32px;"></i>', level: 85, desc: "Advanced CSS styling including Custom Properties (CSS variables) for dynamic dark modes, complex animations, transitions, and writing clean, scalable responsive layouts." },
-      { id: "skill-javascript", name: "JavaScript", icon: '<i class="devicon-javascript-plain colored" style="font-size: 32px;"></i>', level: 85, desc: "Deep knowledge of modern ES6+ vanilla JavaScript. Experienced in asynchronous flow control (Promises, Async/Await), DOM manipulation, dynamic page rendering, and state storage." },
-      { id: "skill-flexbox", name: "Flexbox", icon: "<span style='font-size: 28px;'>📦</span>", level: 90, desc: "One-dimensional layout model. Used extensively to align elements dynamically, manage flexible items within headers, cards, and taskbar navigation panels." },
-      { id: "skill-grid", name: "Grid Layout", icon: "<span style='font-size: 28px;'>🏁</span>", level: 80, desc: "Two-dimensional layout grid. Excellent for building clean, tabular, or masonry layouts like photo galleries and document explorer panes." },
-      { id: "skill-semantic", name: "Semantic HTML", icon: "<span style='font-size: 28px;'>📑</span>", level: 90, desc: "Adhering to correct semantic structures (main, section, article, nav, header, footer) rather than nested divs. Ensures optimized browser parsing, accessibility, and SEO." },
-      { id: "skill-responsive", name: "Responsive Design", icon: "<span style='font-size: 28px;'>📱</span>", level: 90, desc: "Designing pages that fluidly scale from massive 4K monitors down to small mobile phones using fluid grids, flexible images, and media query breakpoints." },
-      { id: "skill-bootstrap", name: "Bootstrap", icon: '<i class="devicon-bootstrap-plain colored" style="font-size: 32px;"></i>', level: 75, desc: "Rapid prototyping framework. Experienced with using its predefined grid layouts and components for corporate projects and quick dashboard applications." },
-      { id: "skill-tailwind", name: "Tailwind CSS", icon: '<i class="devicon-tailwindcss-original colored" style="font-size: 32px;"></i>', level: 80, desc: "Utility-first CSS framework. Used to quickly style responsive modern designs using direct inline class configurations without bloated stylesheets." }
-    ]
-  },
-  {
-    name: "Back-End & Database",
-    icon: "⚙️",
-    skills: [
-      { id: "skill-php", name: "PHP", icon: '<i class="devicon-php-plain colored" style="font-size: 32px;"></i>', level: 80, desc: "Server-side scripting language. Comfortable building backend dynamic routing, form submissions, session tracking, and RESTful API structures." },
-      { id: "skill-laravel", name: "Laravel", icon: '<i class="devicon-laravel-original colored" style="font-size: 32px;"></i>', level: 85, desc: "My favorite backend framework. Strong familiarity with MVC architecture, routing, migrations, Eloquent ORM, authentication, and middleware systems." },
-      { id: "skill-mysql", name: "MySQL", icon: '<i class="devicon-mysql-plain colored" style="font-size: 32px;"></i>', level: 80, desc: "Relational database management. Writing efficient SQL queries, indexing, setting up primary/foreign key constraints, and designing clean database schemas." }
-    ]
-  },
-  {
-    name: "Design & Methodology",
-    icon: "🛠️",
-    skills: [
-      { id: "skill-uml", name: "UML Design", icon: "<span style='font-size: 28px;'>📐</span>", level: 75, desc: "Unified Modeling Language. Creating flowcharts, use case diagrams, and database relational schemas before writing code to ensure correct software architecture." },
-      { id: "skill-git", name: "Git & Version Control", icon: '<i class="devicon-git-plain colored" style="font-size: 32px;"></i>', level: 80, desc: "Daily use of Git for source control: branching strategies, commits, merges, and pull requests via GitHub. Comfortable working in collaborative repositories and managing project history." }
-    ]
-  }
-];
+let allSkillsData = null;
 
 /**
  * Renders the Skills page with the new card-grid design.
  * Each skill is a clickable card that reveals a detail panel.
  */
-function initSkills() {
+async function initSkills() {
   const gridContainer = document.getElementById('device-list');
   if (!gridContainer) return;
 
@@ -716,9 +605,36 @@ function initSkills() {
 
   let activeCategoryIndex = 0;
 
+  // Caching: read from sessionStorage
+  const cached = sessionStorage.getItem('techcorner_skills_cache');
+  if (cached) {
+    try {
+      allSkillsData = JSON.parse(cached);
+    } catch (e) {
+      console.warn('Failed to parse cached skills.');
+    }
+  }
+
+  if (!allSkillsData) {
+    try {
+      const response = await fetch('data/skills.json');
+      if (response.ok) {
+        allSkillsData = await response.json();
+        sessionStorage.setItem('techcorner_skills_cache', JSON.stringify(allSkillsData));
+      } else {
+        throw new Error('Skills fetch response not OK');
+      }
+    } catch (err) {
+      console.error('Failed to load skills:', err);
+      allSkillsData = [];
+    }
+  }
+
   function renderCategorySkills() {
     gridContainer.innerHTML = '';
-    const category = skillCategories[activeCategoryIndex];
+    if (!allSkillsData || !allSkillsData.length) return;
+    const category = allSkillsData[activeCategoryIndex];
+    if (!category || !category.skills) return;
 
     category.skills.forEach(skill => {
       const card = document.createElement('div');
@@ -804,9 +720,9 @@ function initGuestbook() {
       card.className = 'guestbook-msg';
       card.innerHTML = `
         <div class="guestbook-msg-meta">
-          <strong>${msg.name}</strong> — <small>${msg.date}</small>
+          <strong>${escapeHTML(msg.name)}</strong> — <small>${escapeHTML(msg.date)}</small>
         </div>
-        <div class="guestbook-msg-text">${msg.text}</div>
+        <div class="guestbook-msg-text">${escapeHTML(msg.text)}</div>
       `;
       messagesEl.appendChild(card);
     });
@@ -816,12 +732,7 @@ function initGuestbook() {
     const text = inputEl.value.trim();
     if (!text) return alert("Please write a message before signing!");
     
-    const now = new Date();
-    const dateStr = now.getFullYear() + "-" +
-      String(now.getMonth() + 1).padStart(2, '0') + "-" +
-      String(now.getDate()).padStart(2, '0') + " " +
-      String(now.getHours()).padStart(2, '0') + ":" +
-      String(now.getMinutes()).padStart(2, '0');
+    const dateStr = formatNow();
 
     const names = ["Vibe Checker", "Tech Enthusiast", "Cool Recruiter", "Retro Lover", "Internet Explorer Fan", "Coffee Addict"];
     const randomName = names[Math.floor(Math.random() * names.length)];

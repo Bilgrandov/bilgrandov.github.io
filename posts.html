@@ -11,8 +11,8 @@
   <meta name="description" content="Bilgrandov's learning journal: competitive programming notes, fullstack web development insights, and hands-on project write-ups. Documented as it happens.">
   <meta property="og:title" content="Bilgrandov — Posts & Journal">
   <meta property="og:description" content="Learning journal documented raw and unfiltered. CP, Blog, and dev notes.">
-  <meta property="og:image" content="https://bilgrandov.github.io/myPortfolio/assets/profile.jpg">
-  <meta property="og:url" content="https://bilgrandov.github.io/myPortfolio/posts.html">
+  <meta property="og:image" content="https://bilgrandov.github.io/assets/profile.jpg">
+  <meta property="og:url" content="https://bilgrandov.github.io/posts.html">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#e8650a">
   <title>Bilgrandov — Posts & Journal</title>
@@ -70,32 +70,6 @@
 
   <div class="main-content">
     <div class="page-scroll">
-
-      <!-- Admin compose panel (hidden by default) -->
-      <div id="admin-compose-window" class="admin-compose hidden" hidden style="display:none; margin-top: 0;">
-        <div class="admin-compose-header">
-          🔐 Admin — New Post
-        </div>
-        <div class="admin-compose-body">
-          <div class="form-group">
-            <label class="form-label" for="post-title">Title</label>
-            <input class="form-input" type="text" id="post-title" placeholder="What's on your mind?">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="post-content">Content (Markdown)</label>
-            <textarea class="form-textarea" id="post-content" placeholder="Write your post here…"></textarea>
-          </div>
-          <div class="form-actions">
-            <button class="btn btn-outline btn-sm" type="button" id="post-clear">Clear</button>
-            <button class="btn btn-primary btn-sm" type="button" id="post-submit">Generate JSON</button>
-          </div>
-          <div id="json-output-container" class="hidden" style="margin-top:12px;">
-            <label class="form-label">Copy to data/posts.json:</label>
-            <textarea class="form-textarea" id="json-output" readonly style="height:80px; font-family:var(--font-mono); font-size:11px;"></textarea>
-            <button class="btn btn-outline btn-sm" type="button" id="copy-json-btn" style="margin-top:6px;">Copy to Clipboard</button>
-          </div>
-        </div>
-      </div>
 
       <header class="doc-header">
         <div class="doc-header-meta">
@@ -183,25 +157,6 @@
       </footer>
     </div>
   </div>
-
-
-  <!-- Login Modal -->
-  <div id="login-modal" class="login-overlay hidden">
-    <div class="login-box">
-      <div class="login-title">🔐 Admin Access</div>
-      <div class="form-group">
-        <label class="form-label" for="admin-password">Password</label>
-        <input class="form-input" id="admin-password" type="password" autocomplete="new-password">
-      </div>
-      <p id="login-error" class="login-error hidden">Incorrect password ❌</p>
-      <div class="form-actions" style="margin-top:16px;">
-        <button class="btn btn-outline btn-sm" id="login-cancel">Cancel</button>
-        <button class="btn btn-primary btn-sm" id="login-submit">Login</button>
-      </div>
-      <button id="close-login" class="sr-only">Close</button>
-    </div>
-  </div>
-
   <script src="supabase.config.js"></script>
   <script src="script.js" defer></script>
 </body>
