@@ -1,145 +1,180 @@
 <!DOCTYPE html>
-<html lang="en">
+<!--
+  ~ projects.html
+  ~ Project archive — Engineer's Field Notes
+  -->
+<html lang="en" data-theme="default">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Bilgrandov's portfolio projects: fullstack web apps built with Laravel, PHP, and JavaScript. Includes live links, tech stacks, and a downloadable PDF resume.">
-  <meta property="og:title" content="★ Bilgrandov's Tech Corner ★ ~ Projects">
-  <meta property="og:description" content="Bilgrandov's portfolio projects: fullstack web apps built with Laravel, PHP, and JavaScript. Includes live links, tech stacks, and a downloadable PDF resume.">
+  <meta name="description" content="Bilgrandov's portfolio projects: fullstack web apps built with Laravel, PHP, and JavaScript. Includes live links, tech stacks, and a downloadable PDF export.">
+  <meta property="og:title" content="Bilgrandov — Project Archive">
+  <meta property="og:description" content="Active blueprints and archives. Selected projects pulled from the desk.">
   <meta property="og:image" content="https://bilgrandov.github.io/myPortfolio/assets/profile.jpg">
   <meta property="og:url" content="https://bilgrandov.github.io/myPortfolio/projects.html">
   <meta property="og:type" content="website">
-  <meta name="theme-color" content="#245edb">
-  <title>★ Bilgrandov's Tech Corner ★ ~ Projects</title>
+  <meta name="theme-color" content="#e8650a">
+  <title>Bilgrandov — Project Archive</title>
   <link rel="icon" href="assets/icon.webp" type="image/webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Kosugi+Maru&display=swap">
-  <link rel="stylesheet" href="assets/xp.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@400;500;600&family=Caveat:wght@400;700&family=Space+Mono:wght@400;700&display=swap">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 </head>
 
 <body>
-  <div class="crt-overlay"></div>
-  <img src="assets/work_sticker.webp" class="work-badge" alt="Open to Work" width="130" height="130" loading="lazy">
-  <canvas id="sparkle-canvas" aria-hidden="true"></canvas>
+  <div class="nav-overlay" id="nav-overlay"></div>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Open navigation">☰</button>
 
-  <main class="page-container">
-    <div class="window main-window">
-      <div class="title-bar">
-        <div class="title-bar-text">📁 My Projects — C:\Projects</div>
-        <div class="title-bar-controls">
-          <button aria-label="Minimize"></button>
-          <button aria-label="Maximize"></button>
-          <button aria-label="Close"></button>
+  <nav class="side-nav" id="side-nav" aria-label="Main navigation">
+    <div class="nav-brand">
+      <div class="nav-brand-id">BILGRANDOV / BTC</div>
+      <div class="nav-brand-name">Field <span>Notes</span></div>
+      <div class="nav-open-badge">Open to Work</div>
+    </div>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">
+        <span class="nav-link-icon">◈</span>
+        <span class="nav-link-label">Profile</span>
+        <span class="nav-link-no">BG.01</span>
+      </a>
+      <a href="skills.html" class="nav-link">
+        <span class="nav-link-icon">◎</span>
+        <span class="nav-link-label">Skills</span>
+        <span class="nav-link-no">BG.02</span>
+      </a>
+      <a href="projects.html" class="nav-link active">
+        <span class="nav-link-icon">◫</span>
+        <span class="nav-link-label">Projects</span>
+        <span class="nav-link-no">BG.03</span>
+      </a>
+      <a href="posts.html" class="nav-link">
+        <span class="nav-link-icon">◻</span>
+        <span class="nav-link-label">Posts</span>
+        <span class="nav-link-no">BG.04</span>
+      </a>
+      <a href="contact.html" class="nav-link">
+        <span class="nav-link-icon">◌</span>
+        <span class="nav-link-label">Contact</span>
+        <span class="nav-link-no">BG.05</span>
+      </a>
+    </div>
+    <div class="nav-footer">
+      <button class="theme-toggle" id="theme-switcher" title="Toggle dark mode">☀ Light</button>
+      <div class="nav-clock" id="taskbar-clock">--:--</div>
+    </div>
+  </nav>
+
+  <div class="main-content">
+    <div class="page-scroll">
+
+      <header class="doc-header">
+        <div class="doc-header-meta">
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">File No.</span>
+            <span class="doc-meta-value">BG.03</span>
+          </div>
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Status</span>
+            <span class="doc-meta-value">Maintained</span>
+          </div>
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Updated</span>
+            <span class="doc-meta-value" id="header-date">2026</span>
+          </div>
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Scope</span>
+            <span class="doc-meta-value">Selected Work</span>
+          </div>
         </div>
-      </div>
-      <div class="window-body" style="padding: 0;">
-        <div class="explorer-container">
-          <!-- Kolom Kiri: Sidebar -->
-          <div class="explorer-sidebar">
-            <div style="padding: 8px; border-bottom: 1px solid #ccc;">
-              <button id="download-pdf-btn"
-                style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 4px; font-weight: bold; cursor: pointer;">
-                <span style="font-size: 16px;">📄</span> Export to PDF
-              </button>
-            </div>
-            <div class="tree-container">
-              <ul class="tree-view" id="projects-tree">
+        <div class="doc-header-title" style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+          <div>
+            <div class="doc-eyebrow">Project Archive</div>
+            <h1 class="doc-heading">Active blueprints &amp; <em>archives.</em></h1>
+            <p class="doc-desc">A few selected projects pulled from the desk.
+              Each file tracks the intent, my exact role, the stack, and its current state.</p>
+          </div>
+          <div style="padding-top: 28px;">
+            <button id="download-pdf-btn" class="btn btn-outline" type="button">
+              ↓ Export PDF
+            </button>
+          </div>
+        </div>
+      </header>
 
-              </ul>
+      <main>
+        <!-- Projects Explorer layout -->
+        <div class="projects-layout">
+          <!-- Sidebar: project tree -->
+          <div class="projects-sidebar">
+            <div class="proj-sidebar-top">
+              <span style="font-family: var(--font-mono); font-size: 10px; color: var(--text-subtle); letter-spacing: 0.08em; text-transform: uppercase;">
+                <span id="projects-count-text">0</span> projects
+              </span>
+            </div>
+            <div class="proj-tree" id="projects-tree">
+              <!-- Dynamically populated -->
             </div>
           </div>
 
-          <!-- Kolom Kanan: Viewer -->
-          <div class="explorer-content" id="project-viewer">
-
-            <!-- Tampilan Awal (Belum ada yang diklik) -->
-            <div id="proj-default" class="project-view-pane">
-              <div class="explorer-index" id="explorer-index" style="padding: 16px;">
-                <h2>Select a project to view details</h2>
-                <p>Or browse the categories below:</p>
-                <div id="index-projects-list" style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
-                  <!-- Index items will be injected here dynamically -->
-                </div>
+          <!-- Right: viewer -->
+          <div class="projects-viewer" id="project-viewer">
+            <!-- Default: card grid -->
+            <div id="proj-default" class="proj-default">
+              <div class="proj-default-heading">
+                <div class="section-label">All Projects</div>
+              </div>
+              <div id="index-projects-list" style="display: contents;">
+                <!-- Dynamically populated as cards -->
               </div>
             </div>
-
-            <!-- Wadah Konten Proyek (Kita isi di Langkah 2) -->
-
-
+            <!-- Individual project panes injected here -->
           </div>
         </div>
-      </div>
-      <div class="window-footer">
-        <span id="projects-count-text"><img src="assets/icon.webp" class="footer-mascot" alt="" loading="lazy" width="24" height="24">5
-          projects found</span>
-        <span>～ more coming soon! ～</span>
-      </div>
-    </div>
-  </main>
+      </main>
 
-  <!-- Taskbar -->
-  <nav class="taskbar">
-    <button class="start-btn" type="button">
-      <span class="start-icon">🪟</span> Start
-    </button>
-    <div class="taskbar-divider"></div>
-    <div class="taskbar-links">
-      <a href="index.html" class="taskbar-link"><span class="link-icon">🏠</span> <span>Home</span></a>
-      <a href="skills.html" class="taskbar-link"><span class="link-icon">⚡</span> <span>Skills</span></a>
-      <a href="projects.html" class="taskbar-link active"><span class="link-icon">📁</span> <span>Projects</span></a>
-      <a href="posts.html" class="taskbar-link"><span class="link-icon">📝</span> <span>Posts</span></a>
-      <a href="contact.html" class="taskbar-link"><span class="link-icon">💌</span> <span>Contact</span></a>
+      <footer class="page-footer">
+        <span>Project archive — more coming soon</span>
+        <span style="font-family: var(--font-hand); font-size: 14px; color: var(--orange);">building things 🔧</span>
+      </footer>
     </div>
-    <button id="theme-switcher" class="theme-switcher-btn" title="Switch Theme">☀️</button>
-    <div class="taskbar-clock" id="taskbar-clock">12:00</div>
-  </nav>
+  </div>
+
 
   <script src="supabase.config.js"></script>
   <script src="script.js" defer></script>
   <script>
     /**
      * Toggles the visibility of project detail panes.
-     * Hides all panes and removes the 'hidden' class from the selected project.
-     * 
-     * @param {string} projectId - The DOM ID of the project pane to display.
      */
     function showProject(projectId) {
-      document.querySelectorAll('.project-view-pane').forEach(el => {
-        el.classList.add('hidden');
+      document.querySelectorAll('.proj-detail').forEach(el => {
+        el.classList.remove('visible');
       });
 
-      const containerEl = document.querySelector('.explorer-container');
-      if (containerEl) {
-        if (projectId === 'proj-default') {
-          containerEl.classList.remove('view-details');
-        } else {
-          containerEl.classList.add('view-details');
-        }
+      const projDefault = document.getElementById('proj-default');
+
+      if (projectId === 'proj-default') {
+        if (projDefault) projDefault.style.display = '';
+        return;
       }
+
+      if (projDefault) projDefault.style.display = 'none';
 
       const targetPane = document.getElementById(projectId);
       if (targetPane) {
-        targetPane.classList.remove('hidden');
+        targetPane.classList.add('visible');
         targetPane.style.opacity = '0';
-        targetPane.style.transition = 'opacity 0.2s ease-in-out';
+        targetPane.style.transition = 'opacity 0.2s ease';
         setTimeout(() => { targetPane.style.opacity = '1'; }, 10);
       }
 
       // Highlight selected tree node
-      const treeEl = document.getElementById('projects-tree');
-      if (treeEl) {
-        treeEl.querySelectorAll('li').forEach(item => {
-          if (item.getAttribute('data-proj-id') === projectId) {
-            item.classList.add('selected-item');
-          } else {
-            item.classList.remove('selected-item');
-          }
-        });
-      }
+      document.querySelectorAll('.proj-tree-item').forEach(item => {
+        item.classList.toggle('active', item.getAttribute('data-proj-id') === projectId);
+      });
     }
 
     async function loadProjects() {
@@ -154,475 +189,256 @@
           projects = await response.json();
           sessionStorage.setItem('techcorner_projects_cache', JSON.stringify(projects));
         }
-        window.portfolioProjects = projects; // Save globally for PDF generator
-        
-        // Update footer project count dynamically
-        const footerCountEl = document.getElementById('projects-count-text');
-        if (footerCountEl) {
-          footerCountEl.innerHTML = `<img src="assets/icon.webp" class="footer-mascot" alt="" loading="lazy" width="24" height="24">${projects.length} projects found`;
-        }
+        window.portfolioProjects = projects;
+
+        // Update count
+        const countEl = document.getElementById('projects-count-text');
+        if (countEl) countEl.textContent = projects.length;
 
         const treeEl = document.getElementById('projects-tree');
         const viewerEl = document.getElementById('project-viewer');
         const indexListEl = document.getElementById('index-projects-list');
 
-        if (indexListEl) {
-          indexListEl.innerHTML = '';
-        }
+        if (indexListEl) indexListEl.innerHTML = '';
 
-        // Extract unique categories for folder creation
         const categories = [...new Set(projects.map(p => p.category))];
 
         categories.forEach(cat => {
-          // Render category folder in sidebar
-          const folder = document.createElement('li');
-          folder.className = 'folder';
-          folder.textContent = `📁 ${cat}`;
-          folder.setAttribute('tabindex', '0');
-          treeEl.appendChild(folder);
-
-          // Add category section to index view
-          if (indexListEl) {
-            const catHeader = document.createElement('div');
-            catHeader.style.fontWeight = 'bold';
-            catHeader.style.marginTop = '8px';
-            catHeader.innerHTML = `📁 ${cat}`;
-            indexListEl.appendChild(catHeader);
-          }
+          // Sidebar folder label
+          const folderLabel = document.createElement('div');
+          folderLabel.className = 'proj-tree-folder';
+          folderLabel.textContent = cat;
+          treeEl.appendChild(folderLabel);
 
           const catProjects = projects.filter(p => p.category === cat);
 
           catProjects.forEach(p => {
-            // Render project file item in sidebar
-            const li = document.createElement('li');
-            li.textContent = `📄 ${p.title}`;
-            li.setAttribute('data-proj-id', p.id);
-            li.setAttribute('tabindex', '0');
-            li.onclick = () => showProject(p.id);
-            li.onkeydown = (e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                showProject(p.id);
-              }
-            };
-            treeEl.appendChild(li);
+            // Sidebar item
+            const btn = document.createElement('button');
+            btn.className = 'proj-tree-item';
+            btn.textContent = p.title;
+            btn.setAttribute('data-proj-id', p.id);
+            btn.setAttribute('tabindex', '0');
+            btn.onclick = () => showProject(p.id);
+            treeEl.appendChild(btn);
 
-            // Add project link to index view
+            // Card in grid
             if (indexListEl) {
-              const item = document.createElement('div');
-              item.style.paddingLeft = '20px';
-              item.style.cursor = 'pointer';
-              item.style.color = 'var(--text-color, #000)';
-              item.style.textDecoration = 'underline';
-              item.setAttribute('tabindex', '0');
-              item.innerHTML = `📄 <strong>${p.title}</strong> — <small>${p.role} (${p.year})</small>`;
-              item.onclick = () => showProject(p.id);
-              item.onkeydown = (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  showProject(p.id);
-                }
-              };
-              indexListEl.appendChild(item);
+              const statusClass = p.category === 'Work In Progress'
+                ? 'badge-wip'
+                : (p.status && p.status.toLowerCase().includes('maintain') ? 'badge-active' : 'badge-done');
+
+              const card = document.createElement('div');
+              card.className = 'proj-card';
+              card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:10px;">
+                  <div class="card-label">Project File</div>
+                  <span class="badge ${statusClass}">${p.category === 'Work In Progress' ? 'WIP' : (p.status ? 'Maintained' : 'Done')}</span>
+                </div>
+                <div class="card-title">${p.title}</div>
+                <p class="card-desc" style="margin-top:6px;">${p.description.length > 100 ? p.description.slice(0, 100) + '…' : p.description}</p>
+                <div class="tags-row" style="margin-top:10px;">
+                  ${p.tags.slice(0, 3).map(t => `<span class="tag">${t}</span>`).join('')}
+                </div>
+                <div style="margin-top:14px; font-family:var(--font-mono); font-size:10px; color:var(--text-subtle);">
+                  ${p.role} · ${p.year}
+                </div>
+              `;
+              card.onclick = () => showProject(p.id);
+              indexListEl.appendChild(card);
             }
 
-            // Construct project content pane
-            const pane = document.createElement('div');
-            pane.id = p.id;
-            pane.className = 'project-view-pane hidden';
-
-            // Build dynamic HTML segments
-            const statusHtml = p.status
-              ? `<div class="project-status-alert"><strong>Current Status:</strong> ${p.status}</div>`
-              : '';
+            // Build status badge HTML for detail pane
+            let statusBadgeHtml = '';
+            if (p.category === 'Work In Progress') {
+              statusBadgeHtml = `<span class="badge badge-wip">Work in Progress</span>`;
+            } else if (p.status && p.status.toLowerCase().includes('maintain')) {
+              statusBadgeHtml = `<span class="badge badge-active">Maintained</span>`;
+            } else {
+              statusBadgeHtml = `<span class="badge badge-done">Done</span>`;
+            }
 
             const imgHtml = p.image
-              ? `<div class="image-scroll-container"><img src="${p.image}" alt="${p.title}" loading="lazy" width="843" height="422"></div>`
+              ? `<div class="proj-image-wrap"><img src="${p.image}" alt="${p.title}" loading="lazy"></div>`
               : '';
 
-            const tagsHtml = p.tags.map(t => {
-              if (t === 'ONGOING') return `<span class="project-tag-ongoing">${t}</span>`;
-              if (p.category === 'Work In Progress') return `<span class="project-tag-wip">${t}</span>`;
-              return `<span>${t}</span>`;
-            }).join('');
+            const statusNoteHtml = p.status
+              ? `<div class="proj-status-note"><strong>Status note:</strong> ${p.status}</div>`
+              : '';
 
             const linkHtml = p.link
-              ? `<a href="${p.link}" target="_blank"><button type="button">${p.linkText}</button></a>`
-              : `<button type="button" disabled style="${p.linkText.includes('looking') ? 'cursor: help;' : ''}">${p.linkText}</button>`;
+              ? `<a href="${p.link}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">${p.linkText} →</a>`
+              : `<button class="btn btn-outline btn-sm" disabled>${p.linkText}</button>`;
 
-            // Inject assembled HTML into pane
+            const tagsHtml = p.tags.map(t => `<span class="tag">${t}</span>`).join('');
+
+            const pane = document.createElement('div');
+            pane.id = p.id;
+            pane.className = 'proj-detail';
             pane.innerHTML = `
-              <div style="margin: -24px -24px 16px -24px; padding: 8px 12px; border-bottom: 1px solid #ccc; background: #eaeaea; display: flex; align-items: center; gap: 8px;">
-                <button onclick="showProject('proj-default')" style="cursor: pointer; padding: 3px 8px; display: inline-flex; align-items: center; gap: 4px;">
-                  🔙 Back to Projects
-                </button>
+              <div class="proj-detail-nav">
+                <button onclick="showProject('proj-default')" class="btn btn-outline btn-sm">← Back</button>
+                <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-subtle);">Project File · ${p.year}</span>
+                ${statusBadgeHtml}
               </div>
-              <div class="project-body">
-                <div class="project-icon" ${p.category === 'Work In Progress' ? 'style="background: #fff3e6; border-color: #ffcc80;"' : ''}>${p.icon}</div>
-                <div class="project-details">
-                  <h3 style="margin-top: 0; font-size: 18px; ${p.category === 'Work In Progress' ? 'color: #cc7a00;' : ''}">${p.title}</h3>
-                  <div class="project-meta-info">
-                    <strong>Role:</strong> ${p.role} &nbsp;|&nbsp; <strong>Year:</strong> ${p.year}
+              <div class="proj-detail-body">
+                <div class="proj-icon-box">${p.icon}</div>
+                <h2 style="font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--ink);letter-spacing:-0.02em;margin-bottom:10px;">${p.title}</h2>
+                <div class="proj-meta-row">
+                  <div class="proj-meta-item">
+                    <span class="proj-meta-key">Role</span>
+                    <span class="proj-meta-val">${p.role}</span>
                   </div>
-                  ${imgHtml}
-                  <p>${p.description}</p>
-                  ${statusHtml}
-                  <div class="project-tags">${tagsHtml}</div>
-                  <div class="project-links">${linkHtml}</div>
+                  <div class="proj-meta-item">
+                    <span class="proj-meta-key">Year</span>
+                    <span class="proj-meta-val">${p.year}</span>
+                  </div>
+                  <div class="proj-meta-item">
+                    <span class="proj-meta-key">Category</span>
+                    <span class="proj-meta-val">${p.category}</span>
+                  </div>
                 </div>
+                ${imgHtml}
+                <p style="font-size:14px;color:var(--text-muted);line-height:1.7;margin-bottom:14px;">${p.description}</p>
+                ${statusNoteHtml}
+                <div class="tags-row">${tagsHtml}</div>
+                <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;">${linkHtml}</div>
               </div>
             `;
-
             viewerEl.appendChild(pane);
           });
         });
 
       } catch (err) {
-        console.error("Failed to load projects.json:", err);
+        console.error('Failed to load projects.json:', err);
       }
     }
 
-    // Initialize projects on script load
     loadProjects();
 
-    /**
-    * Helper to load an image from a URL and convert it to base64 JPEG format.
-    * jsPDF requires base64 to embed images natively.
-    */
+    // --- PDF Generation (unchanged logic, same output) ---
     function getBase64Image(url) {
       return new Promise((resolve, reject) => {
         const img = new Image();
         img.onload = () => {
           try {
             const canvas = document.createElement('canvas');
-            
-            // Constrain maximum resolution to 500px to optimize PDF file size
             const maxDim = 500;
-            let w = img.width;
-            let h = img.height;
+            let w = img.width, h = img.height;
             if (w > maxDim || h > maxDim) {
-              if (w > h) {
-                h = Math.round((h * maxDim) / w);
-                w = maxDim;
-              } else {
-                w = Math.round((w * maxDim) / h);
-                h = maxDim;
-              }
+              if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+              else { w = Math.round((w * maxDim) / h); h = maxDim; }
             }
-            
-            canvas.width = w;
-            canvas.height = h;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, w, h);
-            
-            // Convert to PNG to preserve alpha channel transparency
-            const dataURL = canvas.toDataURL('image/png');
-            resolve({ dataURL, width: w, height: h });
-          } catch (err) {
-            reject(new Error("Canvas taint/conversion error: " + err.message));
-          }
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve({ dataURL: canvas.toDataURL('image/png'), width: w, height: h });
+          } catch (err) { reject(err); }
         };
-        img.onerror = error => reject(new Error("Failed to load image resource: " + url));
+        img.onerror = () => reject(new Error('Failed to load: ' + url));
         img.src = url;
       });
     }
 
-    /**
-     * Generates a PDF document from the loaded JSON data using jsPDF.
-     * Implements "Jalur B" (Auto-generated PDF with embedded images).
-     */
     async function generatePDF() {
-      // Check if jsPDF library has loaded from CDN
-      if (!window.jspdf) {
-        alert("PDF Library is still loading. Please wait a moment and try again.");
-        return;
-      }
-
+      if (!window.jspdf) { alert('PDF Library is still loading. Please wait.'); return; }
       const btn = document.getElementById('download-pdf-btn');
-      const originalBtnHTML = btn.innerHTML;
-      btn.innerHTML = `<span style="font-size: 16px;">⏳</span> Generating...`;
+      const orig = btn.innerHTML;
+      btn.innerHTML = '⏳ Generating…';
       btn.disabled = true;
-
       try {
         const { jsPDF } = window.jspdf;
-        // Use Landscape ('l') orientation for a presentation-style layout
-        const doc = new jsPDF({ orientation: "l", unit: "mm", format: "a4" });
-
-        if (!window.portfolioProjects || window.portfolioProjects.length === 0) {
-          throw new Error("No projects found to export!");
-        }
-
-        // Loop through all projects (1 Page = 1 Project constraint)
+        const doc = new jsPDF({ orientation: 'l', unit: 'mm', format: 'a4' });
+        if (!window.portfolioProjects || !window.portfolioProjects.length) throw new Error('No projects found!');
         for (let i = 0; i < window.portfolioProjects.length; i++) {
           const p = window.portfolioProjects[i];
-
-          // Generate a new page for every subsequent project
-          if (i > 0) {
-            doc.addPage();
-          }
-
-          // 1. Cozy Parchment Background & Mountain Silhouette (using my-gallery header styles)
+          if (i > 0) doc.addPage();
           const bgCanvas = document.createElement('canvas');
-          bgCanvas.width = 800;
-          bgCanvas.height = 566;
+          bgCanvas.width = 800; bgCanvas.height = 566;
           const bgCtx = bgCanvas.getContext('2d');
-          
-          // Auto-scale context to draw original coordinates on a smaller footprint
-          bgCtx.scale(800 / 1440, 566 / 1018);
-
-          // Fill background color
-          bgCtx.fillStyle = '#F4EAE0';
-          bgCtx.fillRect(0, 0, 1440, 1018);
-
-          // Draw Back Mountain (#EADBC8)
-          bgCtx.fillStyle = '#EADBC8';
-          bgCtx.beginPath();
-          bgCtx.moveTo(0, 1018);
-          bgCtx.lineTo(250, 1018 - (250 - 80) * 0.96);
-          bgCtx.lineTo(510, 1018 - (250 - 190) * 0.96);
-          bgCtx.lineTo(850, 1018 - (250 - 40) * 0.96);
-          bgCtx.lineTo(1180, 1018 - (250 - 210) * 0.96);
-          bgCtx.lineTo(1440, 1018 - (250 - 100) * 0.96);
-          bgCtx.lineTo(1440, 1018);
-          bgCtx.closePath();
-          bgCtx.fill();
-
-          // Draw Front Mountain (#DAC0A3)
-          bgCtx.fillStyle = '#DAC0A3';
-          bgCtx.beginPath();
-          bgCtx.moveTo(0, 1018);
-          bgCtx.lineTo(180, 1018 - (250 - 150) * 0.96);
-          bgCtx.lineTo(420, 1018 - (250 - 220) * 0.96);
-          bgCtx.lineTo(680, 1018 - (250 - 120) * 0.96);
-          bgCtx.lineTo(1020, 1018 - (250 - 200) * 0.96);
-          bgCtx.lineTo(1290, 1018 - (250 - 130) * 0.96);
-          bgCtx.lineTo(1440, 1018 - (250 - 180) * 0.96);
-          bgCtx.lineTo(1440, 1018);
-          bgCtx.closePath();
-          bgCtx.fill();
-
-          // Convert background to JPEG with 0.6 quality (takes much less space than PNG)
-          const bgDataURL = bgCanvas.toDataURL('image/jpeg', 0.6);
-          doc.addImage(bgDataURL, 'JPEG', 0, 0, 297, 210);
-
-
-          // 2. Notebook horizontal grid lines
-          doc.setDrawColor(240, 230, 210); // #F0E6D2
-          doc.setLineWidth(0.25);
-          for (let lineY = 24; lineY < 192; lineY += 7) {
-            doc.line(20, lineY, 285, lineY);
+          bgCtx.scale(800/1440, 566/1018);
+          bgCtx.fillStyle = '#F4EAE0'; bgCtx.fillRect(0,0,1440,1018);
+          bgCtx.fillStyle = '#EADBC8'; bgCtx.beginPath();
+          bgCtx.moveTo(0,1018); bgCtx.lineTo(250,1018-(250-80)*0.96); bgCtx.lineTo(510,1018-(250-190)*0.96);
+          bgCtx.lineTo(850,1018-(250-40)*0.96); bgCtx.lineTo(1180,1018-(250-210)*0.96); bgCtx.lineTo(1440,1018-(250-100)*0.96);
+          bgCtx.lineTo(1440,1018); bgCtx.closePath(); bgCtx.fill();
+          bgCtx.fillStyle = '#DAC0A3'; bgCtx.beginPath();
+          bgCtx.moveTo(0,1018); bgCtx.lineTo(180,1018-(250-150)*0.96); bgCtx.lineTo(420,1018-(250-220)*0.96);
+          bgCtx.lineTo(680,1018-(250-120)*0.96); bgCtx.lineTo(1020,1018-(250-200)*0.96); bgCtx.lineTo(1290,1018-(250-130)*0.96);
+          bgCtx.lineTo(1440,1018-(250-180)*0.96); bgCtx.lineTo(1440,1018); bgCtx.closePath(); bgCtx.fill();
+          doc.addImage(bgCanvas.toDataURL('image/jpeg',0.6),'JPEG',0,0,297,210);
+          doc.setDrawColor(240,230,210); doc.setLineWidth(0.25);
+          for (let lineY = 24; lineY < 192; lineY+=7) doc.line(20,lineY,285,lineY);
+          doc.setDrawColor(224,90,71); doc.setLineWidth(0.4); doc.line(26,0,26,210);
+          for (let ringY = 12; ringY < 200; ringY+=14) {
+            doc.setDrawColor(180,190,200); doc.setLineWidth(1.2); doc.line(4,ringY,11,ringY);
+            doc.setFillColor(45,58,58); doc.circle(4,ringY,0.7,'F'); doc.circle(11,ringY,0.7,'F');
           }
-
-          // 3. Notebook Margin Red Line
-          doc.setDrawColor(224, 90, 71); // #E05A47
-          doc.setLineWidth(0.4);
-          doc.line(26, 0, 26, 210);
-
-          // 4. Spiral Binder Rings on Left Border
-          for (let ringY = 12; ringY < 200; ringY += 14) {
-            // Metallic silver ring loop
-            doc.setDrawColor(180, 190, 200);
-            doc.setLineWidth(1.2);
-            doc.line(4, ringY, 11, ringY);
-
-            // Punch holes
-            doc.setFillColor(45, 58, 58); // Forest/Charcoal
-            doc.circle(4, ringY, 0.7, "F");
-            doc.circle(11, ringY, 0.7, "F");
-          }
-
-          // 5. Retro Postage Category Stamp (Top Right)
-          doc.setFillColor(255, 255, 255);
-          doc.setDrawColor(45, 58, 58);
-          doc.setLineWidth(0.5);
-          doc.rect(225, 8, 58, 14, "FD");
-          // Stamp inner border decoration
-          doc.setDrawColor(230, 161, 92); // Sun gold
-          doc.setLineWidth(0.25);
-          doc.rect(227, 9.5, 54, 11);
-
-          doc.setFontSize(8);
-          doc.setTextColor(45, 58, 58);
-          doc.text(`YEAR: ${p.year}`, 230, 13);
-          const shortCat = p.category.length > 20 ? p.category.substring(0, 18) + '...' : p.category;
-          doc.text(`CAT: ${shortCat.toUpperCase()}`, 230, 17);
-
-          // 6. Project Title (Brutalist style)
-          doc.setFontSize(22);
-          doc.setTextColor(224, 90, 71); // Campfire Orange
-          doc.text(`${p.title}`, 32, 18);
-
+          doc.setFillColor(255,255,255); doc.setDrawColor(45,58,58); doc.setLineWidth(0.5); doc.rect(225,8,58,14,'FD');
+          doc.setDrawColor(230,161,92); doc.setLineWidth(0.25); doc.rect(227,9.5,54,11);
+          doc.setFontSize(8); doc.setTextColor(45,58,58);
+          doc.text(`YEAR: ${p.year}`,230,13);
+          const shortCat = p.category.length>20?p.category.substring(0,18)+'…':p.category;
+          doc.text(`CAT: ${shortCat.toUpperCase()}`,230,17);
+          doc.setFontSize(22); doc.setTextColor(224,90,71); doc.text(`${p.title}`,32,18);
           let leftY = 28;
-
-          // Role info
-          doc.setFontSize(10);
-          doc.setTextColor(45, 93, 78); // Deep Pine Green
-          doc.text(`Operational Role: ${p.role}`, 32, leftY);
-          leftY += 5;
-
-          // Decorative separator line (dashed)
-          doc.setDrawColor(45, 58, 58);
-          doc.setLineWidth(0.3);
-          doc.setLineDashPattern([2, 2], 0);
-          doc.line(32, leftY, 283, leftY);
-          doc.setLineDashPattern([], 0); // reset dash pattern
-          leftY += 8;
-
-          // 7. Responsive Text Block width calculation
+          doc.setFontSize(10); doc.setTextColor(45,93,78); doc.text(`Operational Role: ${p.role}`,32,leftY); leftY+=5;
+          doc.setDrawColor(45,58,58); doc.setLineWidth(0.3); doc.setLineDashPattern([2,2],0); doc.line(32,leftY,283,leftY); doc.setLineDashPattern([],0); leftY+=8;
           const textColumnWidth = p.image ? 100 : 240;
-
-          // Project Description
-          doc.setFontSize(11);
-          doc.setTextColor(45, 58, 58); // Charcoal
+          doc.setFontSize(11); doc.setTextColor(45,58,58);
           const descLines = doc.splitTextToSize(p.description, textColumnWidth);
-          doc.text(descLines, 32, leftY);
-          leftY += (descLines.length * 5.5) + 6;
-
-          // Publication Link
+          doc.text(descLines,32,leftY); leftY+=(descLines.length*5.5)+6;
           if (p.link) {
-            doc.setFontSize(10);
-            doc.setTextColor(224, 90, 71); // Campfire Orange
-            const linkText = `Link: ${p.link}`;
-            const targetWidth = p.image ? 100 : 240;
+            doc.setFontSize(10); doc.setTextColor(224,90,71);
+            const linkText = `Link: ${p.link}`; const targetWidth = p.image?100:240;
             let shortLink = linkText;
-            if (doc.getTextWidth(shortLink) > targetWidth) {
-              while (shortLink.length > 0 && doc.getTextWidth(shortLink + "...") > targetWidth) {
-                shortLink = shortLink.substring(0, shortLink.length - 1);
-              }
-              shortLink += "...";
-            }
-            doc.textWithLink(shortLink, 32, leftY, { url: p.link });
-            // Underline
-            const textWidth = doc.getTextWidth(shortLink);
-            doc.setDrawColor(224, 90, 71);
-            doc.setLineWidth(0.25);
-            doc.line(32, leftY + 1, 32 + textWidth, leftY + 1);
-            leftY += 8;
+            if (doc.getTextWidth(shortLink)>targetWidth) { while(shortLink.length>0&&doc.getTextWidth(shortLink+'...')>targetWidth) shortLink=shortLink.substring(0,shortLink.length-1); shortLink+='...'; }
+            doc.textWithLink(shortLink,32,leftY,{url:p.link});
+            doc.setDrawColor(224,90,71); doc.setLineWidth(0.25); doc.line(32,leftY+1,32+doc.getTextWidth(shortLink),leftY+1); leftY+=8;
           }
-
-          // Special status notes (ongoing etc)
-          if (p.status) {
-            doc.setFontSize(10);
-            doc.setTextColor(230, 161, 92); // Warm Gold
-            const statusLines = doc.splitTextToSize(`Status: ${p.status}`, textColumnWidth);
-            doc.text(statusLines, 32, leftY);
-            leftY += (statusLines.length * 5) + 8;
-          }
-
-          // 8. Neo-Brutalist rectangular tag badges
-          if (p.tags && p.tags.length > 0) {
-            let tagX = 32;
-            p.tags.forEach(t => {
-              const tWidth = doc.getTextWidth(t);
-              const badgeW = tWidth + 6;
-              const badgeH = 6;
-
-              // Flat offset shadow
-              doc.setFillColor(45, 58, 58);
-              doc.rect(tagX + 1, leftY + 1, badgeW, badgeH, "F");
-
-              // Badge container
-              if (t === 'ONGOING' || p.category === 'Work In Progress') {
-                doc.setFillColor(255, 235, 204); // gold tint
-              } else {
-                doc.setFillColor(255, 255, 255); // white
-              }
-              doc.setDrawColor(45, 58, 58);
-              doc.setLineWidth(0.4);
-              doc.rect(tagX, leftY, badgeW, badgeH, "FD");
-
-              // Badge text
-              doc.setFontSize(8);
-              doc.setTextColor(45, 58, 58);
-              doc.text(t, tagX + 3, leftY + 4.3);
-
-              tagX += badgeW + 4;
+          if (p.status) { doc.setFontSize(10); doc.setTextColor(230,161,92); const sl=doc.splitTextToSize(`Status: ${p.status}`,textColumnWidth); doc.text(sl,32,leftY); leftY+=(sl.length*5)+8; }
+          if (p.tags&&p.tags.length>0) {
+            let tagX=32;
+            p.tags.forEach(t=>{
+              const tW=doc.getTextWidth(t);
+              const bW=tW+6; const bH=6;
+              // Shadow
+              doc.setFillColor(45,58,58);
+              doc.rect(tagX+1,leftY+1,bW,bH,'F');
+              // Tag fill — setFillColor requires 3 separate r,g,b args (NOT an array)
+              const isWip = t==='ONGOING' || (p.category||'').includes('Progress');
+              if (isWip) { doc.setFillColor(255,235,204); }
+              else       { doc.setFillColor(255,255,255); }
+              doc.setDrawColor(45,58,58); doc.setLineWidth(0.4);
+              doc.rect(tagX,leftY,bW,bH,'FD');
+              doc.setFontSize(8); doc.setTextColor(45,58,58);
+              doc.text(t,tagX+3,leftY+4.3);
+              tagX+=bW+4;
             });
           }
-
-          // 9. Polaroid Screenshot layout on the right column
           if (p.image) {
             try {
               const imgData = await getBase64Image(p.image);
-
-              // Max area width X=145 to 283 leaves ~138mm.
-              let imgW = 120;
-              let imgH = (imgData.height * imgW) / imgData.width;
-
-              // Constrain max height
-              if (imgH > 115) {
-                imgH = 115;
-                imgW = (imgData.width * imgH) / imgData.height;
-              }
-
-              // Center in the right side area
-              const xPos = 145 + ((130 - imgW) / 2);
-              const yPos = 35;
-
-              // 9a. Draw Flat Hard Shadow of Polaroid card (brutalist offset)
-              doc.setFillColor(45, 58, 58);
-              doc.rect(xPos - 4.5 + 2.5, yPos - 4.5 + 2.5, imgW + 9, imgH + 18, "F");
-
-              // 9b. Draw White Polaroid Card Container
-              doc.setFillColor(255, 255, 255);
-              doc.setDrawColor(45, 58, 58);
-              doc.setLineWidth(0.5);
-              doc.rect(xPos - 4.5, yPos - 4.5, imgW + 9, imgH + 18, "FD");
-
-              // 9c. Render Project image on top (using PNG to preserve transparency)
-              doc.addImage(imgData.dataURL, 'PNG', xPos, yPos, imgW, imgH);
-
-              // 9d. Draw a tilted Washi Tape sticker on top
-              const tapeW = 26;
-              const tapeH = 6;
-              const tapeX = xPos + imgW / 2 - tapeW / 2;
-              const tapeY = yPos - 7;
-
-              // Tilted rectangle drawn as polygon coordinates
-              doc.setFillColor(230, 161, 92); // Gold tape
-              doc.triangle(tapeX, tapeY + 1, tapeX + tapeW, tapeY - 1, tapeX + tapeW, tapeY + tapeH - 1, "F");
-              doc.triangle(tapeX, tapeY + 1, tapeX, tapeY + tapeH + 1, tapeX + tapeW, tapeY + tapeH - 1, "F");
-              // Tape dashed edges
-              doc.setDrawColor(45, 58, 58);
-              doc.setLineWidth(0.2);
-              doc.line(tapeX, tapeY + 1, tapeX, tapeY + tapeH + 1);
-              doc.line(tapeX + tapeW, tapeY - 1, tapeX + tapeW, tapeY + tapeH - 1);
-            } catch (err) {
-              console.warn("Could not load image for PDF:", p.image, err);
-            }
+              let imgW=120; let imgH=(imgData.height*imgW)/imgData.width;
+              if (imgH>115) { imgH=115; imgW=(imgData.width*imgH)/imgData.height; }
+              const xPos=145+((130-imgW)/2); const yPos=35;
+              doc.setFillColor(45,58,58); doc.rect(xPos-4.5+2.5,yPos-4.5+2.5,imgW+9,imgH+18,'F');
+              doc.setFillColor(255,255,255); doc.setDrawColor(45,58,58); doc.setLineWidth(0.5); doc.rect(xPos-4.5,yPos-4.5,imgW+9,imgH+18,'FD');
+              doc.addImage(imgData.dataURL,'PNG',xPos,yPos,imgW,imgH);
+              const tW=26,tH=6,tX=xPos+imgW/2-tW/2,tY=yPos-7;
+              doc.setFillColor(230,161,92); doc.triangle(tX,tY+1,tX+tW,tY-1,tX+tW,tY+tH-1,'F'); doc.triangle(tX,tY+1,tX,tY+tH+1,tX+tW,tY+tH-1,'F');
+              doc.setDrawColor(45,58,58); doc.setLineWidth(0.2); doc.line(tX,tY+1,tX,tY+tH+1); doc.line(tX+tW,tY-1,tX+tW,tY+tH-1);
+            } catch(err){ console.warn('Could not load image for PDF:',p.image,err); }
           }
-
-          // ==========================================
-          // PDF PAGE FOOTER (Scrapbook style)
-          // ==========================================
-
-          // Separator dotted line
-          doc.setDrawColor(45, 58, 58);
-          doc.setLineWidth(0.3);
-          doc.setLineDashPattern([2, 2], 0);
-          doc.line(32, 194, 283, 194);
-          doc.setLineDashPattern([], 0); // reset
-
-          // Footer info
-          doc.setFontSize(8);
-          doc.setTextColor(45, 58, 58);
-          doc.text("Compiled by Bilgrandov's Tech Corner Portfolio Project Scrapbook", 32, 201);
-          doc.text(`PAGE ${i + 1} OF ${window.portfolioProjects.length}`, 262, 201);
+          doc.setDrawColor(45,58,58); doc.setLineWidth(0.3); doc.setLineDashPattern([2,2],0); doc.line(32,194,283,194); doc.setLineDashPattern([],0);
+          doc.setFontSize(8); doc.setTextColor(45,58,58);
+          doc.text("Compiled by Bilgrandov's Tech Corner — Project Scrapbook",32,201);
+          doc.text(`PAGE ${i+1} OF ${window.portfolioProjects.length}`,262,201);
         }
-
-        // Trigger file download
-        doc.save("Bilgrandov_Cozy_Scrapbook_Deck.pdf");
-
-      } catch (err) {
-        console.error(err);
-        alert(err.message || "Failed to generate PDF.");
-      } finally {
-        btn.innerHTML = originalBtnHTML;
-        btn.disabled = false;
-      }
+        doc.save('Bilgrandov_Project_Scrapbook.pdf');
+      } catch(err) { console.error(err); alert(err.message||'Failed to generate PDF.'); }
+      finally { btn.innerHTML = orig; btn.disabled = false; }
     }
 
-    // Attach event listener to our new button
     document.getElementById('download-pdf-btn').addEventListener('click', generatePDF);
   </script>
 

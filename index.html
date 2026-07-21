@@ -1,137 +1,204 @@
 <!DOCTYPE html>
 <!--
   ~ index.html
-  ~ Main entry point for Bilgrandov's Tech Corner portfolio.
-  ~ Features the homepage layout, introduction narrative, and latest post teasers.
+  ~ Bilgrandov's Portfolio — "Engineer's Field Notes"
+  ~ Homepage: Profile document / front sheet
   -->
-<html lang="en">
+<html lang="en" data-theme="default">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Bilgrandov is a Software Engineer specializing in Backend Development with Laravel, PHP, and JavaScript. Browse projects, learning posts, and technical skills.">
-  <meta property="og:title" content="Bilgrandov's Tech Corner ★ ~ Home">
-  <meta property="og:description" content="Bilgrandov is a Software Engineer specializing in Backend Development with Laravel, PHP, and JavaScript. Browse projects, learning posts, and technical skills.">
+  <meta name="description" content="Bilgrandov — Software Engineer specializing in Backend Development with Laravel, PHP, and JavaScript. Browse projects, learning posts, and technical skills.">
+  <meta property="og:title" content="Bilgrandov — Engineer's Field Notes">
+  <meta property="og:description" content="Backend Engineer. Building with Laravel, PHP & JavaScript. Documenting the journey.">
   <meta property="og:image" content="https://bilgrandov.github.io/myPortfolio/assets/profile.jpg">
   <meta property="og:url" content="https://bilgrandov.github.io/myPortfolio/index.html">
   <meta property="og:type" content="website">
-  <meta name="theme-color" content="#245edb">
-  <title>Bilgrandov's Tech Corner ★ ~ Home</title>
+  <meta name="theme-color" content="#e8650a">
+  <title>Bilgrandov — Engineer's Field Notes</title>
   <link rel="icon" href="assets/icon.webp" type="image/webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Kosugi+Maru&display=swap">
-  <link rel="stylesheet" href="assets/xp.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@400;500;600&family=Caveat:wght@400;700&family=Space+Mono:wght@400;700&display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <div class="crt-overlay"></div>
-  <img src="assets/work_sticker.webp" class="work-badge" alt="Open to Work" width="130" height="130" loading="lazy">
-  <canvas id="sparkle-canvas" aria-hidden="true"></canvas>
+  <!-- Mobile nav overlay -->
+  <div class="nav-overlay" id="nav-overlay"></div>
 
-  <main class="page-container">
-    <div class="window main-window">
-      <div class="title-bar">
-        <div class="title-bar-text">💫 Bilgrandov's Tech Corner // Home</div>
-        <div class="title-bar-controls">
-          <button aria-label="Minimize"></button>
-          <button aria-label="Maximize"></button>
-          <button aria-label="Close"></button>
-        </div>
-      </div>
-      <div class="window-body">
-        <!-- Marquee -->
-        <div class="marquee-bar">
-          <span class="marquee-text">彡 Welcome to my tech portfolio! ★彡 ～ Software Engineer ～ ★彡 Backend Enthusiast ★彡
-          </span>
-        </div>
+  <!-- Hamburger (mobile) -->
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Open navigation">☰</button>
 
-
-        <!-- About -->
-        <div class="home-content">
-          <div class="home-mascot">
-            <img src="assets/profile.jpg" alt="Bilgrandov" class="profile-photo" width="180" height="180">
-            <p class="mascot-label">～ Bilgrandov ～</p>
-          </div>
-          <div class="home-text">
-            <h2>✧ Halo! ・ﾟ✧</h2>
-            <p>I'm <strong>Bilgrandov</strong>, a Software Engineer focused on <strong>Backend Development</strong>
-              and <strong>Fullstack Web</strong>. I build with <strong>Laravel, PHP, and JavaScript</strong>, actively
-              sharpening my skills through <strong>Competitive Programming (LeetCode)</strong>.</p>
-
-            <p>I graduated with a D3 in Computer Science and decided to go beyond the classroom:
-              I run an independent training program, document everything I learn, and build real projects to prove my skills.
-              This portfolio is that living record. 🌱</p>
-
-          </div>
-        </div>
-
-        <!-- Stats -->
-        <div class="home-stats">
-          <div class="stat-box">
-            <fieldset>
-              <legend>Projects</legend>
-              <span class="stat-num" data-count="5">0</span>
-            </fieldset>
-          </div>
-          <div class="stat-box">
-            <fieldset>
-              <legend>Posts Written</legend>
-              <span class="stat-num" id="stat-posts">0</span>
-            </fieldset>
-          </div>
-        </div>
-
-        <!-- Latest Blog Posts -->
-        <div class="home-latest">
-          <fieldset>
-            <legend>📝 Latest Learnings</legend>
-            <div id="latest-posts-container">
-              <p class="loading-text">Fetching latest posts... ⌛</p>
-            </div>
-            <div style="text-align: right; margin-top: 8px;">
-              <a href="posts.html" class="view-all-link">View all posts »</a>
-            </div>
-          </fieldset>
-        </div>
-
-        <!-- CRT Monitor Controls -->
-        <div class="crt-config-panel">
-          <fieldset>
-            <legend>🖥️ CRT Monitor Controls (Display Properties)</legend>
-            <div class="crt-controls">
-              <span>CRT Effect:</span>
-              <button class="crt-btn" type="button" id="crt-on">On</button>
-              <button class="crt-btn" type="button" id="crt-off">Off</button>
-            </div>
-          </fieldset>
-        </div>
-      </div>
-      <div class="window-footer">
-        <span><img src="assets/icon.webp" class="footer-mascot" alt="" loading="lazy" width="24" height="24">© 2026
-          Bilgrandov's Tech Corner</span>
-        <span>Made with ♡ &amp; HTML</span>
-      </div>
+  <!-- Side Navigation -->
+  <nav class="side-nav" id="side-nav" aria-label="Main navigation">
+    <div class="nav-brand">
+      <div class="nav-brand-id">BILGRANDOV / BTC</div>
+      <div class="nav-brand-name">Field <span>Notes</span></div>
+      <div class="nav-open-badge">Open to Work</div>
     </div>
-  </main>
-
-  <!-- Taskbar -->
-  <nav class="taskbar">
-    <button class="start-btn" type="button">
-      <span class="start-icon">🪟</span> Start
-    </button>
-    <div class="taskbar-divider"></div>
-    <div class="taskbar-links">
-      <a href="index.html" class="taskbar-link active"><span class="link-icon">🏠</span> <span>Home</span></a>
-      <a href="skills.html" class="taskbar-link"><span class="link-icon">⚡</span> <span>Skills</span></a>
-      <a href="projects.html" class="taskbar-link"><span class="link-icon">📁</span> <span>Projects</span></a>
-      <a href="posts.html" class="taskbar-link"><span class="link-icon">📝</span> <span>Posts</span></a>
-      <a href="contact.html" class="taskbar-link"><span class="link-icon">💌</span> <span>Contact</span></a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link active" id="nav-home">
+        <span class="nav-link-icon">◈</span>
+        <span class="nav-link-label">Profile</span>
+        <span class="nav-link-no">BG.01</span>
+      </a>
+      <a href="skills.html" class="nav-link" id="nav-skills">
+        <span class="nav-link-icon">◎</span>
+        <span class="nav-link-label">Skills</span>
+        <span class="nav-link-no">BG.02</span>
+      </a>
+      <a href="projects.html" class="nav-link" id="nav-projects">
+        <span class="nav-link-icon">◫</span>
+        <span class="nav-link-label">Projects</span>
+        <span class="nav-link-no">BG.03</span>
+      </a>
+      <a href="posts.html" class="nav-link" id="nav-posts">
+        <span class="nav-link-icon">◻</span>
+        <span class="nav-link-label">Posts</span>
+        <span class="nav-link-no">BG.04</span>
+      </a>
+      <a href="contact.html" class="nav-link" id="nav-contact">
+        <span class="nav-link-icon">◌</span>
+        <span class="nav-link-label">Contact</span>
+        <span class="nav-link-no">BG.05</span>
+      </a>
     </div>
-    <button id="theme-switcher" class="theme-switcher-btn" title="Switch Theme">☀️</button>
-    <div class="taskbar-clock" id="taskbar-clock">12:00</div>
+    <div class="nav-footer">
+      <button class="theme-toggle" id="theme-switcher" title="Toggle dark mode">
+        ☀ Light
+      </button>
+      <div class="nav-clock" id="taskbar-clock">--:--</div>
+    </div>
   </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="page-scroll">
+
+      <!-- Doc Header -->
+      <header class="doc-header">
+        <div class="doc-header-meta">
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">File No.</span>
+            <span class="doc-meta-value">BG.01</span>
+          </div>
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Status</span>
+            <span class="doc-meta-value">Active</span>
+          </div>
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Updated</span>
+            <span class="doc-meta-value" id="header-date">2026</span>
+          </div>
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Role</span>
+            <span class="doc-meta-value">Backend Engineer</span>
+          </div>
+        </div>
+        <div class="doc-header-title">
+          <div class="doc-eyebrow">Profile Document / Front Sheet</div>
+          <h1 class="doc-heading">Bilgrandov — <em>Backend</em> Engineer</h1>
+          <p class="doc-desc">D3 CS grad. Self-driven. Building with Laravel, PHP & JS.
+            Documenting every step of the journey — raw and unfiltered.</p>
+        </div>
+      </header>
+
+      <!-- Hero Grid: Intro + Details -->
+      <main>
+        <div class="home-hero">
+          <!-- Left: Intro -->
+          <div class="home-intro">
+            <img src="assets/profile.jpg" alt="Bilgrandov" class="home-profile-img" width="96" height="96">
+
+            <h2 class="home-name">Halo, I'm <em>Bilgrandov</em></h2>
+
+            <p class="home-bio">
+              Software Engineer focused on Backend Development and Fullstack Web.
+              I build with Laravel, PHP, and JavaScript — sharpening my edge
+              through competitive programming on LeetCode.
+            </p>
+
+            <div class="home-cta">
+              <a href="projects.html" class="btn btn-primary">View Projects →</a>
+              <a href="contact.html" class="btn btn-outline">Get in touch</a>
+            </div>
+          </div>
+
+          <!-- Right: Details table -->
+          <div class="home-details">
+            <div class="section-label">Profile Details</div>
+            <table class="details-table">
+              <tbody>
+                <tr>
+                  <td>Role</td>
+                  <td>Backend / Fullstack Engineer</td>
+                </tr>
+                <tr>
+                  <td>Location</td>
+                  <td>Indonesia</td>
+                </tr>
+                <tr>
+                  <td>Focus</td>
+                  <td>Laravel · PHP · JavaScript</td>
+                </tr>
+                <tr>
+                  <td>Also into</td>
+                  <td>Competitive Programming (LeetCode)</td>
+                </tr>
+                <tr>
+                  <td>Education</td>
+                  <td>D3 Computer Science</td>
+                </tr>
+                <tr>
+                  <td>Status</td>
+                  <td>
+                    <span class="badge badge-active">Available for projects</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="home-stats-row">
+          <div class="stat-item">
+            <span class="stat-num" data-count="5" id="stat-projects">0</span>
+            <span class="stat-label">Projects Built</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num" id="stat-posts">0</span>
+            <span class="stat-label">Posts Written</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">∞</span>
+            <span class="stat-label">Things to Learn</span>
+          </div>
+        </div>
+
+        <!-- Latest Learnings -->
+        <div class="home-latest">
+          <div class="section-label">Latest Learnings</div>
+          <div id="latest-posts-container">
+            <p class="loading-text">Fetching latest posts… ⌛</p>
+          </div>
+          <div style="margin-top: 16px;">
+            <a href="posts.html" class="btn btn-outline btn-sm">View all posts →</a>
+          </div>
+        </div>
+      </main>
+
+      <!-- Footer -->
+      <footer class="page-footer">
+        <span>© 2026 Bilgrandov's Tech Corner — Made with ♡ &amp; HTML</span>
+        <span style="font-family: var(--font-hand); font-size: 14px; color: var(--orange);">always learning 🌱</span>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Floating work badge -->
 
   <script src="supabase.config.js"></script>
   <script src="script.js" defer></script>

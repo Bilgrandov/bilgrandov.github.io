@@ -1,102 +1,212 @@
 <!DOCTYPE html>
 <!--
   ~ contact.html
-  ~ Contact information and social media links.
-  ~ Includes a guestbook form for visitor interaction.
+  ~ Contact document — Engineer's Field Notes
   -->
-<html lang="en">
+<html lang="en" data-theme="default">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Get in touch with Bilgrandov — Software Engineer open to work. Find links to GitHub, LinkedIn, Instagram, and email contact.">
-  <meta property="og:title" content="★ Bilgrandov's Tech Corner ★ ~ Contact">
-  <meta property="og:description" content="Get in touch with Bilgrandov — Software Engineer open to work. Find links to GitHub, LinkedIn, Instagram, and email contact.">
+  <meta property="og:title" content="Bilgrandov — Contact">
+  <meta property="og:description" content="Open to thoughtful projects. Backend, Fullstack, and everything in between.">
   <meta property="og:image" content="https://bilgrandov.github.io/myPortfolio/assets/profile.jpg">
   <meta property="og:url" content="https://bilgrandov.github.io/myPortfolio/contact.html">
   <meta property="og:type" content="website">
-  <meta name="theme-color" content="#245edb">
-  <title>★ Bilgrandov's Tech Corner ★ ~ Contact</title>
+  <meta name="theme-color" content="#e8650a">
+  <title>Bilgrandov — Contact</title>
   <link rel="icon" href="assets/icon.webp" type="image/webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Kosugi+Maru&display=swap">
-  <link rel="stylesheet" href="assets/xp.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@400;500;600&family=Caveat:wght@400;700&family=Space+Mono:wght@400;700&display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <div class="crt-overlay"></div>
-  <img src="assets/work_sticker.webp" class="work-badge" alt="Open to Work" width="130" height="130" loading="lazy">
-  <canvas id="sparkle-canvas" aria-hidden="true"></canvas>
+  <div class="nav-overlay" id="nav-overlay"></div>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Open navigation">☰</button>
 
-  <main class="page-container">
-    <div class="window main-window">
-      <div class="title-bar">
-        <div class="title-bar-text">💌 Contact — send_mail.exe</div>
-        <div class="title-bar-controls">
-          <button aria-label="Minimize"></button>
-          <button aria-label="Maximize"></button>
-          <button aria-label="Close"></button>
-        </div>
-      </div>
-      <div class="window-body">
-
-        <p class="contact-intro">Want to work together or just say hi? Drop me a line! (◕‿◕✿)
-        </p>
-
-        <fieldset>
-          <legend>Contact Links</legend>
-          <div class="contact-grid">
-            <a href="mailto:Bilgrandov9902003@gmail.com" target="_blank" class="contact-item-badge">
-              <img src="assets/icons/gmail.svg" alt="Gmail" width="48" height="48">
-            </a>
-            <a href="https://github.com/bilgrandov" target="_blank" rel="noopener" class="contact-item-badge">
-              <img src="assets/icons/github.svg" alt="GitHub" width="48" height="48">
-            </a>
-            <a href="https://www.linkedin.com/in/bilgrandov/" target="_blank" rel="noopener" class="contact-item-badge">
-              <img src="assets/icons/linkedin.svg" alt="LinkedIn" width="48" height="48">
-            </a>
-            <a href="https://www.instagram.com/mentor_hayalan/" target="_blank" rel="noopener" class="contact-item-badge">
-              <img src="assets/icons/instagram.svg" alt="Instagram" width="48" height="48">
-            </a>
-          </div>
-        </fieldset>
-
-        <div class="guestbook-section" hidden>
-          <h3>★ Guestbook ★</h3>
-          <p style="font-size: 11px; color: #555; margin-bottom: 8px;">The guestbook is undergoing a migration. Coming soon! ⌛</p>
-          <div class="guestbook-form" style="opacity: 0.5; pointer-events: none;">
-            <textarea id="guestbook-input" rows="2" placeholder="Guestbook is offline..." disabled></textarea>
-            <button type="button" id="guestbook-submit" disabled>✉ Sign!</button>
-          </div>
-          <div id="guestbook-messages" class="guestbook-messages" style="display: none;"></div>
-        </div>
-
-      </div>
-      <div class="window-footer">
-        <span><img src="assets/icon.webp" class="footer-mascot" alt="" loading="lazy" width="24" height="24">～ See you next time! ～</span>
-        <span>Best viewed in 800×600</span>
-      </div>
+  <nav class="side-nav" id="side-nav" aria-label="Main navigation">
+    <div class="nav-brand">
+      <div class="nav-brand-id">BILGRANDOV / BTC</div>
+      <div class="nav-brand-name">Field <span>Notes</span></div>
+      <div class="nav-open-badge">Open to Work</div>
     </div>
-  </main>
-
-  <!-- Taskbar -->
-  <nav class="taskbar">
-    <button class="start-btn" type="button">
-      <span class="start-icon">🪟</span> Start
-    </button>
-    <div class="taskbar-divider"></div>
-    <div class="taskbar-links">
-      <a href="index.html" class="taskbar-link"><span class="link-icon">🏠</span> <span>Home</span></a>
-      <a href="skills.html" class="taskbar-link"><span class="link-icon">⚡</span> <span>Skills</span></a>
-      <a href="projects.html" class="taskbar-link"><span class="link-icon">📁</span> <span>Projects</span></a>
-      <a href="posts.html" class="taskbar-link"><span class="link-icon">📝</span> <span>Posts</span></a>
-      <a href="contact.html" class="taskbar-link active"><span class="link-icon">💌</span> <span>Contact</span></a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">
+        <span class="nav-link-icon">◈</span>
+        <span class="nav-link-label">Profile</span>
+        <span class="nav-link-no">BG.01</span>
+      </a>
+      <a href="skills.html" class="nav-link">
+        <span class="nav-link-icon">◎</span>
+        <span class="nav-link-label">Skills</span>
+        <span class="nav-link-no">BG.02</span>
+      </a>
+      <a href="projects.html" class="nav-link">
+        <span class="nav-link-icon">◫</span>
+        <span class="nav-link-label">Projects</span>
+        <span class="nav-link-no">BG.03</span>
+      </a>
+      <a href="posts.html" class="nav-link">
+        <span class="nav-link-icon">◻</span>
+        <span class="nav-link-label">Posts</span>
+        <span class="nav-link-no">BG.04</span>
+      </a>
+      <a href="contact.html" class="nav-link active">
+        <span class="nav-link-icon">◌</span>
+        <span class="nav-link-label">Contact</span>
+        <span class="nav-link-no">BG.05</span>
+      </a>
     </div>
-    <button id="theme-switcher" class="theme-switcher-btn" title="Switch Theme">☀️</button>
-    <div class="taskbar-clock" id="taskbar-clock">12:00</div>
+    <div class="nav-footer">
+      <button class="theme-toggle" id="theme-switcher" title="Toggle dark mode">☀ Light</button>
+      <div class="nav-clock" id="taskbar-clock">--:--</div>
+    </div>
   </nav>
+
+  <div class="main-content">
+    <div class="page-scroll">
+
+      <header class="doc-header">
+        <div class="doc-header-meta">
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">File No.</span>
+            <span class="doc-meta-value">BG.05</span>
+          </div>
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Status</span>
+            <span class="doc-meta-value">Open</span>
+          </div>
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Response</span>
+            <span class="doc-meta-value">Within 48h</span>
+          </div>
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Scope</span>
+            <span class="doc-meta-value">Contact Document</span>
+          </div>
+        </div>
+        <div class="doc-header-title">
+          <div class="doc-eyebrow">Contact Document</div>
+          <h1 class="doc-heading">Let's build something <em>real.</em></h1>
+          <p class="doc-desc">Open to thoughtful projects, collaborations, and conversations.
+            If you've read this far, you already know I take my work seriously.</p>
+        </div>
+      </header>
+
+      <main>
+        <div class="contact-layout">
+
+          <!-- Left: Quick Links -->
+          <div class="contact-col">
+            <div class="section-label">Quick Links</div>
+            <div class="contact-links">
+
+              <a href="mailto:Bilgrandov9902003@gmail.com"
+                 target="_blank"
+                 class="contact-link-item"
+                 id="contact-gmail">
+                <img src="assets/icons/gmail.svg" alt="Gmail" class="contact-link-icon" width="36" height="36">
+                <div>
+                  <div class="contact-link-label">Email</div>
+                  <div class="contact-link-sub">Bilgrandov9902003@gmail.com</div>
+                </div>
+                <span class="contact-arrow">→</span>
+              </a>
+
+              <a href="https://github.com/bilgrandov"
+                 target="_blank" rel="noopener"
+                 class="contact-link-item"
+                 id="contact-github">
+                <img src="assets/icons/github.svg" alt="GitHub" class="contact-link-icon" width="36" height="36">
+                <div>
+                  <div class="contact-link-label">GitHub</div>
+                  <div class="contact-link-sub">github.com/bilgrandov</div>
+                </div>
+                <span class="contact-arrow">→</span>
+              </a>
+
+              <a href="https://www.linkedin.com/in/bilgrandov/"
+                 target="_blank" rel="noopener"
+                 class="contact-link-item"
+                 id="contact-linkedin">
+                <img src="assets/icons/linkedin.svg" alt="LinkedIn" class="contact-link-icon" width="36" height="36">
+                <div>
+                  <div class="contact-link-label">LinkedIn</div>
+                  <div class="contact-link-sub">linkedin.com/in/bilgrandov</div>
+                </div>
+                <span class="contact-arrow">→</span>
+              </a>
+
+              <a href="https://www.instagram.com/mentor_hayalan/"
+                 target="_blank" rel="noopener"
+                 class="contact-link-item"
+                 id="contact-instagram">
+                <img src="assets/icons/instagram.svg" alt="Instagram" class="contact-link-icon" width="36" height="36">
+                <div>
+                  <div class="contact-link-label">Instagram</div>
+                  <div class="contact-link-sub">@mentor_hayalan</div>
+                </div>
+                <span class="contact-arrow">→</span>
+              </a>
+
+            </div>
+          </div>
+
+          <!-- Right: Preferences -->
+          <div class="contact-col">
+            <div class="section-label">Work Preferences</div>
+            <table class="contact-pref-table">
+              <tbody>
+                <tr>
+                  <td>Preferred Work</td>
+                  <td>Backend development, Fullstack web, API design</td>
+                </tr>
+                <tr>
+                  <td>Stack</td>
+                  <td>Laravel · PHP · JavaScript · MySQL</td>
+                </tr>
+                <tr>
+                  <td>Engagement</td>
+                  <td>Full-time, part-time, or freelance projects</td>
+                </tr>
+                <tr>
+                  <td>Timezone</td>
+                  <td>UTC+7 (WIB — Indonesia)</td>
+                </tr>
+                <tr>
+                  <td>Style</td>
+                  <td>Async-friendly, document everything, ship iteratively</td>
+                </tr>
+                <tr>
+                  <td>Status</td>
+                  <td>
+                    <span class="badge badge-active">Available for projects</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style="margin-top: 28px; padding: 20px; background: var(--orange-dim); border: 1px solid var(--orange); border-radius: var(--radius-md);">
+              <p style="font-family: var(--font-hand); font-size: 20px; color: var(--orange); line-height: 1.5; margin-bottom: 8px;">
+                "I document everything I learn. If you value transparency and raw effort — we'll get along."
+              </p>
+              <span style="font-family: var(--font-mono); font-size: 10px; color: var(--text-subtle); letter-spacing: 0.08em;">— BILGRANDOV, 2026</span>
+            </div>
+          </div>
+
+        </div>
+      </main>
+
+      <footer class="page-footer">
+        <span>© 2026 Bilgrandov's Tech Corner — Made with ♡ &amp; HTML</span>
+        <span style="font-family: var(--font-hand); font-size: 14px; color: var(--orange);">let's connect 🤝</span>
+      </footer>
+    </div>
+  </div>
+
 
   <script src="supabase.config.js"></script>
   <script src="script.js" defer></script>

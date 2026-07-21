@@ -1,173 +1,209 @@
 <!DOCTYPE html>
 <!--
   ~ posts.html
-  ~ Markdown-powered blog and journal explorer.
-  ~ Interfaces with data/posts.json and renders dynamic content panes.
+  ~ Markdown-powered blog and journal explorer — Engineer's Field Notes
   -->
-<html lang="en">
+<html lang="en" data-theme="default">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Bilgrandov's learning journal: competitive programming notes, fullstack web development insights, and hands-on project write-ups. Documented as it happens.">
-  <meta property="og:title" content="★ Bilgrandov's Tech Corner ★ ~ Posts">
-  <meta property="og:description" content="Bilgrandov's learning journal: competitive programming notes, fullstack web development insights, and hands-on project write-ups. Documented as it happens.">
+  <meta property="og:title" content="Bilgrandov — Posts & Journal">
+  <meta property="og:description" content="Learning journal documented raw and unfiltered. CP, Blog, and dev notes.">
   <meta property="og:image" content="https://bilgrandov.github.io/myPortfolio/assets/profile.jpg">
   <meta property="og:url" content="https://bilgrandov.github.io/myPortfolio/posts.html">
   <meta property="og:type" content="website">
-  <meta name="theme-color" content="#245edb">
-  <title>★ Bilgrandov's Tech Corner ★ ~ Posts</title>
+  <meta name="theme-color" content="#e8650a">
+  <title>Bilgrandov — Posts & Journal</title>
   <link rel="icon" href="assets/icon.webp" type="image/webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Kosugi+Maru&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@400;500;600&family=Caveat:wght@400;700&family=Space+Mono:wght@400;700&display=swap">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="stylesheet" href="assets/xp.css">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
 </head>
+
 <body>
-  <div class="crt-overlay"></div>
-  <img src="assets/work_sticker.webp" class="work-badge" alt="Open to Work" width="130" height="130" loading="lazy">
-  <canvas id="sparkle-canvas" aria-hidden="true"></canvas>
+  <div class="nav-overlay" id="nav-overlay"></div>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Open navigation">☰</button>
 
-  <main class="page-container">
-    <!-- New Post Window (Admin Only) -->
-    <div id="admin-compose-window" class="window main-window hidden" hidden style="margin-bottom: 16px; display: none;">
-      <div class="title-bar">
-        <div class="title-bar-text">📝 New Post — compose.exe</div>
-        <div class="title-bar-controls">
-          <button aria-label="Minimize"></button>
-          <button aria-label="Maximize"></button>
-          <button aria-label="Close"></button>
-        </div>
-      </div>
-      <div class="window-body">
-        <div class="post-form">
-          <label for="post-title">Title:</label>
-          <input type="text" id="post-title" placeholder="What's on your mind?">
-
-          <label for="post-content">Content:</label>
-          <textarea id="post-content" placeholder="Write anything you want here~ (◠‿◠)"></textarea>
-
-          <div class="form-actions">
-            <button type="button" id="post-submit">📋 Generate JSON</button>
-            <button type="button" id="post-clear">🗑️ Clear</button>
-          </div>
-          <div id="json-output-container" class="hidden" style="margin-top: 10px;">
-            <label>Copy this to data/posts.json:</label>
-            <textarea id="json-output" readonly style="height: 100px; font-family: monospace; font-size: 11px;"></textarea>
-            <button type="button" id="copy-json-btn">🖇️ Copy to Clipboard</button>
-          </div>
-        </div>
-      </div>
+  <nav class="side-nav" id="side-nav" aria-label="Main navigation">
+    <div class="nav-brand">
+      <div class="nav-brand-id">BILGRANDOV / BTC</div>
+      <div class="nav-brand-name">Field <span>Notes</span></div>
+      <div class="nav-open-badge">Open to Work</div>
     </div>
-
-    <!-- Posts Explorer Window -->
-    <div class="window main-window">
-      <div class="title-bar">
-        <div class="title-bar-text">📂 Explorer — C:\MyDocuments\Blog_Posts</div>
-        <div class="title-bar-controls">
-          <button aria-label="Minimize"></button>
-          <button aria-label="Maximize"></button>
-          <button aria-label="Close"></button>
-        </div>
-      </div>
-      <div class="window-body" style="padding: 0;">
-        <div class="explorer-container">
-          <!-- Sidebar: Navigation Tree -->
-          <div class="explorer-sidebar">
-            <div class="search-container">
-              <input type="text" id="post-search" placeholder="Search posts..." autocomplete="off" name="post-search">
-            </div>
-            <div class="tree-container">
-              <ul class="tree-view" id="posts-tree">
-                <!-- Tree items will be injected here -->
-                <li>Loading...</li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- Main Content: Post Viewer -->
-          <div class="explorer-content" id="post-viewer">
-            <div class="explorer-index" id="explorer-index" style="padding: 16px;">
-              <h2>Select a post to read</h2>
-              <p>Or browse the categories below:</p>
-              <div id="index-posts-list" style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
-                <!-- Index items will be injected here -->
-              </div>
-            </div>
-            <div class="explorer-post hidden" id="single-post-view">
-              <div style="margin: -24px -24px 16px -24px; padding: 8px 12px; border-bottom: 1px solid #ccc; background: #eaeaea; display: flex; align-items: center; gap: 8px;">
-                <button id="nav-home" style="cursor: pointer; padding: 3px 8px; display: inline-flex; align-items: center; gap: 4px;">
-                  🔙 Back to Posts
-                </button>
-              </div>
-              <div class="explorer-post-header">
-                <h2 id="view-title">Post Title</h2>
-                <div class="explorer-post-meta">
-                  <span id="view-date">Date</span> • <span id="view-category">Category</span>
-                </div>
-              </div>
-              <div class="post-body" id="view-content">
-                <!-- Markdown content here -->
-              </div>
-              <div class="content-pagination">
-                <button id="nav-prev">◀ Previous</button>
-                <button id="nav-next">Next ▶</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="window-footer">
-        <span><img src="assets/icon.webp" class="footer-mascot" alt="" loading="lazy" width="24" height="24"><span id="post-count">0</span> items total</span>
-        <span>～ Computer\Blog_Posts ～</span>
-      </div>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">
+        <span class="nav-link-icon">◈</span>
+        <span class="nav-link-label">Profile</span>
+        <span class="nav-link-no">BG.01</span>
+      </a>
+      <a href="skills.html" class="nav-link">
+        <span class="nav-link-icon">◎</span>
+        <span class="nav-link-label">Skills</span>
+        <span class="nav-link-no">BG.02</span>
+      </a>
+      <a href="projects.html" class="nav-link">
+        <span class="nav-link-icon">◫</span>
+        <span class="nav-link-label">Projects</span>
+        <span class="nav-link-no">BG.03</span>
+      </a>
+      <a href="posts.html" class="nav-link active">
+        <span class="nav-link-icon">◻</span>
+        <span class="nav-link-label">Posts</span>
+        <span class="nav-link-no">BG.04</span>
+      </a>
+      <a href="contact.html" class="nav-link">
+        <span class="nav-link-icon">◌</span>
+        <span class="nav-link-label">Contact</span>
+        <span class="nav-link-no">BG.05</span>
+      </a>
     </div>
-  </main>
-
-  <!-- Taskbar -->
-  <nav class="taskbar">
-    <button class="start-btn" type="button">
-      <span class="start-icon">🪟</span> Start
-    </button>
-    <div class="taskbar-divider"></div>
-    <div class="taskbar-links">
-      <a href="index.html" class="taskbar-link"><span class="link-icon">🏠</span> <span>Home</span></a>
-      <a href="skills.html" class="taskbar-link"><span class="link-icon">⚡</span> <span>Skills</span></a>
-      <a href="projects.html" class="taskbar-link"><span class="link-icon">📁</span> <span>Projects</span></a>
-      <a href="posts.html" class="taskbar-link active"><span class="link-icon">📝</span> <span>Posts</span></a>
-      <a href="contact.html" class="taskbar-link"><span class="link-icon">💌</span> <span>Contact</span></a>
+    <div class="nav-footer">
+      <button class="theme-toggle" id="theme-switcher" title="Toggle dark mode">☀ Light</button>
+      <div class="nav-clock" id="taskbar-clock">--:--</div>
     </div>
-    <button id="theme-switcher" class="theme-switcher-btn" title="Switch Theme">☀️</button>
-    <div class="taskbar-clock" id="taskbar-clock">12:00</div>
   </nav>
 
-  <!-- Login Modal (Hidden) -->
-  <div id="login-modal" class="login-overlay hidden">
-    <div class="window" style="width: 300px;">
-      <div class="title-bar">
-        <div class="title-bar-text">🔐 Admin Login</div>
-        <div class="title-bar-controls">
-          <button aria-label="Close" id="close-login"></button>
+  <div class="main-content">
+    <div class="page-scroll">
+
+      <!-- Admin compose panel (hidden by default) -->
+      <div id="admin-compose-window" class="admin-compose hidden" hidden style="display:none; margin-top: 0;">
+        <div class="admin-compose-header">
+          🔐 Admin — New Post
+        </div>
+        <div class="admin-compose-body">
+          <div class="form-group">
+            <label class="form-label" for="post-title">Title</label>
+            <input class="form-input" type="text" id="post-title" placeholder="What's on your mind?">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="post-content">Content (Markdown)</label>
+            <textarea class="form-textarea" id="post-content" placeholder="Write your post here…"></textarea>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-outline btn-sm" type="button" id="post-clear">Clear</button>
+            <button class="btn btn-primary btn-sm" type="button" id="post-submit">Generate JSON</button>
+          </div>
+          <div id="json-output-container" class="hidden" style="margin-top:12px;">
+            <label class="form-label">Copy to data/posts.json:</label>
+            <textarea class="form-textarea" id="json-output" readonly style="height:80px; font-family:var(--font-mono); font-size:11px;"></textarea>
+            <button class="btn btn-outline btn-sm" type="button" id="copy-json-btn" style="margin-top:6px;">Copy to Clipboard</button>
+          </div>
         </div>
       </div>
-      <div class="window-body">
-        <div class="field-row-stacked">
-          <label for="admin-password">Password:</label>
-          <input id="admin-password" type="password" autocomplete="new-password" style="width: 100%;">
+
+      <header class="doc-header">
+        <div class="doc-header-meta">
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">File No.</span>
+            <span class="doc-meta-value">BG.04</span>
+          </div>
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Status</span>
+            <span class="doc-meta-value">Active</span>
+          </div>
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Total Posts</span>
+            <span class="doc-meta-value"><span id="post-count">0</span></span>
+          </div>
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Scope</span>
+            <span class="doc-meta-value">Learning Journal</span>
+          </div>
         </div>
-        <div class="field-row" style="justify-content: flex-end; margin-top: 10px;">
-          <button id="login-submit">Login</button>
-          <button id="login-cancel">Cancel</button>
+        <div class="doc-header-title">
+          <div class="doc-eyebrow">Post Archive</div>
+          <h1 class="doc-heading">Learning, documented <em>raw.</em></h1>
+          <p class="doc-desc">CP notes, dev write-ups, and stream-of-consciousness journals.
+            Everything I learn gets written down — messy or not.</p>
         </div>
-        <p id="login-error" class="hidden" style="color: red; font-size: 11px; margin-top: 8px;">Incorrect password! ❌</p>
-      </div>
+      </header>
+
+      <main>
+        <!-- Posts Explorer layout -->
+        <div class="posts-layout">
+          <!-- Sidebar: tree -->
+          <div class="posts-sidebar">
+            <div class="posts-search">
+              <input type="text" id="post-search" placeholder="Search posts…" autocomplete="off" name="post-search">
+            </div>
+            <div class="posts-tree" id="posts-tree">
+              <!-- Dynamically populated -->
+              <div style="padding: 16px; font-family: var(--font-mono); font-size: 12px; color: var(--text-subtle);">
+                Loading…
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: viewer -->
+          <div class="posts-viewer" id="post-viewer">
+
+            <!-- Index view -->
+            <div class="posts-index" id="explorer-index">
+              <div class="section-label" style="margin-bottom: 8px;">All Posts</div>
+              <div id="index-posts-list">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+
+            <!-- Single post view -->
+            <div class="post-viewer-pane hidden" id="single-post-view">
+              <div class="post-viewer-nav">
+                <button id="nav-home" class="btn btn-outline btn-sm">← Back to Posts</button>
+              </div>
+              <div class="post-viewer-header">
+                <h2 class="post-viewer-title" id="view-title">Post Title</h2>
+                <div class="post-viewer-meta">
+                  <span id="view-date">Date</span>
+                  <span>·</span>
+                  <span id="view-category">Category</span>
+                </div>
+              </div>
+              <div class="post-viewer-body" id="view-content">
+                <!-- Markdown content renders here -->
+              </div>
+              <div class="post-pagination">
+                <button id="nav-prev" class="btn btn-outline btn-sm">◀ Previous</button>
+                <button id="nav-next" class="btn btn-outline btn-sm">Next ▶</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </main>
+
+      <footer class="page-footer">
+        <span><span id="post-count-footer">0</span> posts in the archive — more coming</span>
+        <span style="font-family: var(--font-hand); font-size: 14px; color: var(--orange);">thinking out loud ✍</span>
+      </footer>
     </div>
   </div>
 
 
+  <!-- Login Modal -->
+  <div id="login-modal" class="login-overlay hidden">
+    <div class="login-box">
+      <div class="login-title">🔐 Admin Access</div>
+      <div class="form-group">
+        <label class="form-label" for="admin-password">Password</label>
+        <input class="form-input" id="admin-password" type="password" autocomplete="new-password">
+      </div>
+      <p id="login-error" class="login-error hidden">Incorrect password ❌</p>
+      <div class="form-actions" style="margin-top:16px;">
+        <button class="btn btn-outline btn-sm" id="login-cancel">Cancel</button>
+        <button class="btn btn-primary btn-sm" id="login-submit">Login</button>
+      </div>
+      <button id="close-login" class="sr-only">Close</button>
+    </div>
+  </div>
+
   <script src="supabase.config.js"></script>
   <script src="script.js" defer></script>
 </body>
+
 </html>

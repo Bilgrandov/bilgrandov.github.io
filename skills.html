@@ -1,101 +1,157 @@
 <!DOCTYPE html>
 <!--
   ~ skills.html
-  ~ Technical skills showcase and technology stack layout.
-  ~ Utilizes DevIcons for visual representations of competencies.
+  ~ Technical skills showcase — Engineer's Field Notes
   -->
-<html lang="en">
+<html lang="en" data-theme="default">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Bilgrandov's technical skill set: Frontend (HTML, CSS, JS, Tailwind), Backend (Laravel, PHP, MySQL), and tooling (Git, UML). Proficiency levels and descriptions for each.">
-  <meta property="og:title" content="★ Bilgrandov's Tech Corner ★ ~ Skills">
-  <meta property="og:description" content="Bilgrandov's technical skill set: Frontend (HTML, CSS, JS, Tailwind), Backend (Laravel, PHP, MySQL), and tooling (Git, UML). Proficiency levels and descriptions for each.">
+  <meta property="og:title" content="Bilgrandov — Skills Record">
+  <meta property="og:description" content="Technical proficiency tracked as a living record. Frontend, Backend, Design & Methodology.">
   <meta property="og:image" content="https://bilgrandov.github.io/myPortfolio/assets/profile.jpg">
   <meta property="og:url" content="https://bilgrandov.github.io/myPortfolio/skills.html">
   <meta property="og:type" content="website">
-  <meta name="theme-color" content="#245edb">
-  <title>★ Bilgrandov's Tech Corner ★ ~ Skills</title>
+  <meta name="theme-color" content="#e8650a">
+  <title>Bilgrandov — Skills Record</title>
   <link rel="icon" href="assets/icon.webp" type="image/webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Kosugi+Maru&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@400;500;600&family=Caveat:wght@400;700&family=Space+Mono:wght@400;700&display=swap">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="stylesheet" href="assets/xp.css">
-  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div class="crt-overlay"></div>
-  <img src="assets/work_sticker.webp" class="work-badge" alt="Open to Work" width="130" height="130" loading="lazy">
-  <canvas id="sparkle-canvas" aria-hidden="true"></canvas>
 
-  <main class="page-container">
-    <div class="window main-window">
-      <div class="title-bar">
-        <div class="title-bar-text">⚡ Skills — skill_tree.dat</div>
-        <div class="title-bar-controls">
-          <button aria-label="Minimize"></button>
-          <button aria-label="Maximize"></button>
-          <button aria-label="Close"></button>
-        </div>
-      </div>
-      <div class="window-body">
-        <menu role="tablist">
-          <button aria-selected="true" id="tab-btn-frontend" type="button">🎨 Front-End</button>
-          <button aria-selected="false" id="tab-btn-backend" type="button">⚙️ Back-End</button>
-          <button aria-selected="false" id="tab-btn-methodology" type="button">🛠️ Design &amp; Method</button>
-        </menu>
-        
-        <div role="tabpanel" id="skills-tabpanel" style="min-height: 380px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 0;">
-          <!-- Device list manager box -->
-          <div style="flex: 1; min-height: 200px; display: flex; flex-direction: column;">
-            <span style="font-size: 11px; margin-bottom: 4px; color: var(--text-color); opacity: 0.85; display: block;">Skills (pilih untuk lihat detail):</span>
-            <div style="flex: 1; overflow-y: auto; border: 1px inset var(--input-border, #ccc); background: var(--input-bg, #fff); max-height: 220px;">
-              <ul class="tree-view" id="device-list" style="border: none; padding: 4px;">
-                <!-- Dynamically populated skills based on selected category tab -->
-                <li>Loading system components...</li>
-              </ul>
-            </div>
+<body>
+  <div class="nav-overlay" id="nav-overlay"></div>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Open navigation">☰</button>
+
+  <nav class="side-nav" id="side-nav" aria-label="Main navigation">
+    <div class="nav-brand">
+      <div class="nav-brand-id">BILGRANDOV / BTC</div>
+      <div class="nav-brand-name">Field <span>Notes</span></div>
+      <div class="nav-open-badge">Open to Work</div>
+    </div>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">
+        <span class="nav-link-icon">◈</span>
+        <span class="nav-link-label">Profile</span>
+        <span class="nav-link-no">BG.01</span>
+      </a>
+      <a href="skills.html" class="nav-link active">
+        <span class="nav-link-icon">◎</span>
+        <span class="nav-link-label">Skills</span>
+        <span class="nav-link-no">BG.02</span>
+      </a>
+      <a href="projects.html" class="nav-link">
+        <span class="nav-link-icon">◫</span>
+        <span class="nav-link-label">Projects</span>
+        <span class="nav-link-no">BG.03</span>
+      </a>
+      <a href="posts.html" class="nav-link">
+        <span class="nav-link-icon">◻</span>
+        <span class="nav-link-label">Posts</span>
+        <span class="nav-link-no">BG.04</span>
+      </a>
+      <a href="contact.html" class="nav-link">
+        <span class="nav-link-icon">◌</span>
+        <span class="nav-link-label">Contact</span>
+        <span class="nav-link-no">BG.05</span>
+      </a>
+    </div>
+    <div class="nav-footer">
+      <button class="theme-toggle" id="theme-switcher" title="Toggle dark mode">☀ Light</button>
+      <div class="nav-clock" id="taskbar-clock">--:--</div>
+    </div>
+  </nav>
+
+  <div class="main-content">
+    <div class="page-scroll">
+
+      <header class="doc-header">
+        <div class="doc-header-meta">
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">File No.</span>
+            <span class="doc-meta-value">BG.02</span>
           </div>
-          
-          <!-- Skill properties pane -->
-          <fieldset style="flex-shrink: 0; min-height: 120px; margin-bottom: 0;">
-              <legend id="skill-details-title">Skill Details</legend>
-            <div id="skill-details-body" style="display: flex; gap: 12px; align-items: flex-start;">
-              <div id="skill-details-icon" style="font-size: 32px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: var(--details-icon-bg, #f0f4ff); border: 1px solid var(--details-icon-border, #d2e2f9); border-radius: 4px; flex-shrink: 0;">🔍</div>
-              <div>
-                <p id="skill-details-desc" style="font-size: 12px; line-height: 1.5; margin: 0; color: var(--text-color);">Pilih skill dari list di atas untuk lihat deskripsi dan level.</p>
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Status</span>
+            <span class="doc-meta-value">Active</span>
+          </div>
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Updated</span>
+            <span class="doc-meta-value" id="header-date">2026</span>
+          </div>
+          <div class="doc-meta-item">
+            <span class="doc-meta-label">Scope</span>
+            <span class="doc-meta-value">Skill Archive</span>
+          </div>
+        </div>
+        <div class="doc-header-title">
+          <div class="doc-eyebrow">Engineering Record</div>
+          <h1 class="doc-heading">Technical proficiency tracked as a <em>living record.</em></h1>
+          <p class="doc-desc">Honest assessments of my toolset. Ordered by real usage, not buzzwords.
+            Click any skill to see my honest take on it.</p>
+        </div>
+      </header>
+
+      <main class="page-body">
+        <!-- Category Tabs -->
+        <div class="skills-tabs" role="tablist" aria-label="Skill categories">
+          <button class="skill-tab-btn" role="tab" id="tab-btn-frontend"
+            aria-selected="true" aria-controls="skills-tabpanel">
+            Front-End
+          </button>
+          <button class="skill-tab-btn" role="tab" id="tab-btn-backend"
+            aria-selected="false" aria-controls="skills-tabpanel">
+            Back-End & Database
+          </button>
+          <button class="skill-tab-btn" role="tab" id="tab-btn-methodology"
+            aria-selected="false" aria-controls="skills-tabpanel">
+            Design & Method
+          </button>
+        </div>
+
+        <!-- Skills Grid -->
+        <div class="skills-grid" id="skills-tabpanel" role="tabpanel" aria-label="Skills">
+          <ul class="skills-grid" id="device-list" style="list-style:none; display:contents;">
+            <!-- Dynamically populated -->
+            <li style="padding: 16px; color: var(--text-subtle); font-family: var(--font-mono); font-size: 12px;">
+              Loading skills…
+            </li>
+          </ul>
+        </div>
+
+        <!-- Skill Detail Panel -->
+        <div class="skill-detail-panel" id="skill-detail-panel">
+          <div class="skill-detail-header">
+            <div class="skill-detail-icon" id="skill-details-icon">◎</div>
+            <div>
+              <div class="skill-detail-name" id="skill-details-title">Select a skill</div>
+              <div class="skill-level-bar">
+                <div class="skill-level-fill" id="skill-level-fill" style="width: 0%"></div>
               </div>
             </div>
-          </fieldset>
+          </div>
+          <p class="skill-detail-desc" id="skill-details-desc">
+            Choose a skill from the grid above to see a detailed description and proficiency level.
+          </p>
         </div>
-      </div>
-      <div class="window-footer">
-        <span><img src="assets/icon.webp" class="footer-mascot" alt="" loading="lazy" width="24" height="24">14 skills loaded</span>
-        <span>～ always learning! ～</span>
-      </div>
-    </div>
-  </main>
+      </main>
 
-  <!-- Taskbar -->
-  <nav class="taskbar">
-    <button class="start-btn" type="button">
-      <span class="start-icon">🪟</span> Start
-    </button>
-    <div class="taskbar-divider"></div>
-    <div class="taskbar-links">
-      <a href="index.html" class="taskbar-link"><span class="link-icon">🏠</span> <span>Home</span></a>
-      <a href="skills.html" class="taskbar-link active"><span class="link-icon">⚡</span> <span>Skills</span></a>
-      <a href="projects.html" class="taskbar-link"><span class="link-icon">📁</span> <span>Projects</span></a>
-      <a href="posts.html" class="taskbar-link"><span class="link-icon">📝</span> <span>Posts</span></a>
-      <a href="contact.html" class="taskbar-link"><span class="link-icon">💌</span> <span>Contact</span></a>
+      <footer class="page-footer">
+        <span>14 skills loaded — always adding more</span>
+        <span style="font-family: var(--font-hand); font-size: 14px; color: var(--orange);">always learning 🌱</span>
+      </footer>
     </div>
-    <button id="theme-switcher" class="theme-switcher-btn" title="Switch Theme">☀️</button>
-    <div class="taskbar-clock" id="taskbar-clock">12:00</div>
-  </nav>
+  </div>
+
 
   <script src="supabase.config.js"></script>
   <script src="script.js" defer></script>
 </body>
+
 </html>

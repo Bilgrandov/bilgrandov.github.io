@@ -1,130 +1,68 @@
 /* ========================================
-   XP.css Multipage Interactive JS
+   Engineer's Field Notes — Portfolio JS
    ======================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
-  initSparkles();
+  initNav();
+  initHeaderDate();
   initClock();
   initStatCounters();
   initPosts();
   initLatestPostsTeaser();
   initAdminMode();
   initThemeSwitcher();
-  initCrtConfig();
   initSkills();
   initGuestbook();
 });
 
 /**
- * Initializes the interactive sparkle cursor trail animation.
- * Renders particles on mouse and touch movement using an HTML5 Canvas.
+ * Initializes the mobile hamburger navigation.
  */
-function initSparkles() {
-  const canvas = document.getElementById('sparkle-canvas');
-  if (!canvas) return;
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (prefersReducedMotion) return;
-  const ctx = canvas.getContext('2d');
-  let particles = [];
-  const colors = ['#00bdd6', '#d2e2f9', '#ff6b9d', '#ffe45e', '#87ceeb'];
-  const isMobile = window.innerWidth <= 640;
-  const MAX_PARTICLES = isMobile ? 80 : 150;
+function initNav() {
+  const hamburger = document.getElementById('nav-hamburger');
+  const sideNav = document.getElementById('side-nav');
+  const overlay = document.getElementById('nav-overlay');
+  if (!hamburger || !sideNav) return;
 
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+  function openNav() {
+    sideNav.classList.add('open');
+    if (overlay) overlay.classList.add('open');
+    hamburger.setAttribute('aria-expanded', 'true');
   }
-  resize();
-  let resizeTimer;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(resize, 150);
+
+  function closeNav() {
+    sideNav.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+  }
+
+  hamburger.addEventListener('click', () => {
+    sideNav.classList.contains('open') ? closeNav() : openNav();
   });
 
-  function spawnParticles(x, y, count) {
-    const alive = particles.filter(p => p.life > 0).length;
-    if (alive >= MAX_PARTICLES) return;
-    for (let i = 0; i < count; i++) {
-      particles.push({
-        x, y,
-        vx: (Math.random() - 0.5) * 2.5,
-        vy: (Math.random() - 0.5) * 2.5 - 0.8,
-        size: Math.random() * 3 + 1.5,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        life: 1,
-        decay: Math.random() * 0.02 + 0.015,
-        type: Math.random() > 0.5 ? 'star' : 'circle'
-      });
-    }
-  }
+  if (overlay) overlay.addEventListener('click', closeNav);
 
-  document.addEventListener('mousemove', (e) => {
-    spawnParticles(e.clientX, e.clientY, 2);
-    ensureAnimating();
+  // Close nav when a link is clicked on mobile
+  sideNav.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 768) closeNav();
+    });
   });
-
-  document.addEventListener('touchmove', (e) => {
-    const touch = e.touches[0];
-    if (touch) spawnParticles(touch.clientX, touch.clientY, 2);
-    ensureAnimating();
-  }, { passive: true });
-
-  function drawStar(cx, cy, size, color, alpha) {
-    ctx.save();
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    for (let i = 0; i < 5; i++) {
-      const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
-      const m = i === 0 ? 'moveTo' : 'lineTo';
-      ctx[m](cx + Math.cos(angle) * size, cy + Math.sin(angle) * size);
-    }
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-  }
-
-  let animating = false;
-  function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles = particles.filter(p => p.life > 0);
-    if (particles.length === 0) {
-      animating = false;
-      return;
-    }
-    for (const p of particles) {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.015;
-      const alpha = Math.max(0, p.life);
-      const radius = Math.max(0.1, p.size * alpha);
-      if (p.type === 'star') {
-        drawStar(p.x, p.y, p.size, p.color, alpha);
-      } else {
-        ctx.save();
-        ctx.globalAlpha = alpha;
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
-      p.life -= p.decay;
-    }
-    requestAnimationFrame(animate);
-  }
-
-  function ensureAnimating() {
-    if (!animating) {
-      animating = true;
-      requestAnimationFrame(animate);
-    }
-  }
 }
 
 /**
- * Initializes the taskbar clock.
- * Updates the time every 30 seconds to match the system time.
+ * Sets the header date to today's formatted date.
+ */
+function initHeaderDate() {
+  const els = document.querySelectorAll('#header-date');
+  const now = new Date();
+  const formatted = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, ' ');
+  els.forEach(el => el.textContent = formatted);
+}
+
+/**
+ * Initializes the nav clock.
+ * Updates the time every 30 seconds.
  */
 function initClock() {
   const el = document.getElementById('taskbar-clock');
@@ -147,20 +85,26 @@ async function initStatCounters() {
   const stats = document.querySelectorAll('.stat-num[data-count]');
   if (!stats.length) return;
 
-  // Dynamically fetch projects count from JSON database to update the home page stats counter
+  // Dynamically fetch projects count from JSON database
   try {
     const response = await fetch('data/projects.json');
     if (response.ok) {
       const projects = await response.json();
+      // Update by data-count attribute on Projects labels
       stats.forEach(el => {
-        const legend = el.previousElementSibling || el.parentElement.querySelector('legend');
-        if (legend && legend.textContent.trim().toLowerCase() === 'projects') {
+        const label = el.closest('.stat-item')?.querySelector('.stat-label')?.textContent?.trim().toLowerCase();
+        if (label && label.includes('project')) {
           el.setAttribute('data-count', projects.length);
         }
       });
+      // Also update stat-projects by ID if present
+      const statProjects = document.getElementById('stat-projects');
+      if (statProjects) {
+        statProjects.setAttribute('data-count', projects.length);
+      }
     }
   } catch (err) {
-    console.warn("Failed to fetch dynamic projects count for homepage:", err);
+    console.warn('Failed to fetch dynamic projects count for homepage:', err);
   }
 
   const observer = new IntersectionObserver((entries) => {
@@ -173,6 +117,11 @@ async function initStatCounters() {
     });
   }, { threshold: 0.5 });
   stats.forEach(s => observer.observe(s));
+  // Also observe stat-projects by ID
+  const statProjects = document.getElementById('stat-projects');
+  if (statProjects && !statProjects.dataset.count) {
+    observer.observe(statProjects);
+  }
 }
 
 function animateCount(el, target) {
@@ -248,52 +197,29 @@ async function ensurePostsFetched() {
 }
 
 /**
- * Renders a dynamic, styled Windows XP error dialog box when Supabase connection fails.
+ * Renders a clean error dialog when Supabase connection fails.
  */
 function showXPErrorDialog(title, message) {
-  // Cegah duplikat error modal
   if (document.getElementById('xp-error-modal')) return;
 
   const overlay = document.createElement('div');
   overlay.id = 'xp-error-modal';
-  overlay.style.cssText = `
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
-  `;
+  overlay.className = 'error-dialog-overlay';
 
   overlay.innerHTML = `
-    <div class="window" style="width: 380px; box-shadow: 2px 2px 20px rgba(0,0,0,0.5);">
-      <div class="title-bar" style="background: linear-gradient(180deg, #e13222 0%, #b21810 100%) !important;">
-        <div class="title-bar-text" style="color: white; font-weight: bold;">⚠️ Connection Error</div>
-        <div class="title-bar-controls">
-          <button aria-label="Close" class="error-close-btn"></button>
-        </div>
+    <div class="error-dialog">
+      <div class="error-dialog-icon">⚠️</div>
+      <div class="error-dialog-text">
+        <strong>${title}</strong>
+        <p>${message}</p>
       </div>
-      <div class="window-body" style="padding: 16px; display: flex; flex-direction: column; gap: 16px; align-items: center;">
-        <div style="display: flex; gap: 16px; align-items: flex-start; text-align: left; width: 100%;">
-          <span style="font-size: 38px; line-height: 1; user-select: none;">❌</span>
-          <div style="font-size: 12px; color: #000; line-height: 1.5;">
-            <strong style="font-size: 13px;">${title}</strong><br>
-            <span style="margin-top: 4px; display: inline-block;">${message}</span>
-          </div>
-        </div>
-        <button class="error-ok-btn" style="padding: 4px 20px; font-weight: bold; cursor: pointer; font-family: inherit; font-size: 12px;">OK</button>
-      </div>
+      <button class="btn btn-outline btn-sm error-ok-btn">OK</button>
     </div>
   `;
 
   const closeDialog = () => overlay.remove();
-  overlay.querySelector('.error-close-btn').addEventListener('click', closeDialog);
   overlay.querySelector('.error-ok-btn').addEventListener('click', closeDialog);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeDialog(); });
 
   document.body.appendChild(overlay);
 }
@@ -327,9 +253,11 @@ async function initPosts() {
         treeEl.appendChild(folder);
         posts.forEach(p => {
           const li = document.createElement('li');
+          li.className = 'posts-tree-item'; // ← apply CSS cursor:pointer
           li.textContent = `📄 ${p.title}`;
           li.setAttribute('data-post-id', p.id);
           li.setAttribute('tabindex', '0');
+          li.setAttribute('role', 'button');
           li.onclick = () => window.location.hash = `post-${p.id}`;
           li.onkeydown = (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -370,19 +298,22 @@ async function initPosts() {
         const posts = allPostsData.filter(p => p.type.toUpperCase() === cat);
         if (posts.length) {
           const catHeader = document.createElement('div');
-          catHeader.style.fontWeight = 'bold';
-          catHeader.style.marginTop = '8px';
+          catHeader.className = 'posts-index-cat-header';
           catHeader.innerHTML = `📁 ${cat}`;
           idxList.appendChild(catHeader);
 
           posts.forEach(p => {
             const item = document.createElement('div');
-            item.style.paddingLeft = '20px';
-            item.style.cursor = 'pointer';
-            item.style.color = 'var(--text-color, #000)';
-            item.style.textDecoration = 'underline';
+            // Use CSS class — no hardcoded color so dark mode works
+            item.className = 'post-index-item';
             item.setAttribute('tabindex', '0');
-            item.innerHTML = `📄 <strong>${p.title}</strong> — <small>${p.date}</small>`;
+            item.setAttribute('role', 'button');
+            item.innerHTML = `
+              <div>
+                <span class="post-cat-badge post-cat-${p.type.toUpperCase()}">${p.type.toUpperCase()}</span>
+                <div class="post-index-title">${p.title}</div>
+              </div>
+              <div class="post-index-meta">${p.date}</div>`;
             item.onclick = () => window.location.hash = `post-${p.id}`;
             item.onkeydown = (e) => {
               if (e.key === 'Enter' || e.key === ' ') {
@@ -537,15 +468,31 @@ async function initLatestPostsTeaser() {
     animateCount(statPosts, allPostsData.length);
   }
 
+  // Update header post count (posts.html)
+  const headerPostCount = document.getElementById('post-count');
+  if (headerPostCount) headerPostCount.textContent = allPostsData.length;
+
   const posts = allPostsData.length ? allPostsData : [];
-  const latest = posts.slice(0, 2);
-  if (latest.length === 0) return;
+  const latest = posts.slice(0, 3);
+  if (latest.length === 0) { container.innerHTML = ''; return; }
   container.innerHTML = '';
   latest.forEach(p => {
     const div = document.createElement('div');
-    div.innerHTML = `<strong>${p.title}</strong><br><small>${p.date}</small>`;
+    div.className = 'latest-post-item';
+    div.innerHTML = `
+      <div>
+        <span class="post-cat-badge post-cat-${p.type.toUpperCase()}">${p.type.toUpperCase()}</span>
+        <div class="latest-post-title">${p.title}</div>
+      </div>
+      <div class="latest-post-meta">${p.date}</div>
+    `;
+    div.style.cursor = 'pointer';
+    div.onclick = () => { window.location.href = `posts.html#post-${p.id}`; };
     container.appendChild(div);
   });
+  // Also update footer count
+  const footerCount = document.getElementById('post-count-footer');
+  if (footerCount) footerCount.textContent = allPostsData.length;
 }
 
 /**
@@ -696,71 +643,24 @@ function initThemeSwitcher() {
   const switcherBtn = document.getElementById('theme-switcher');
   if (!switcherBtn) return;
 
-  const icons = ['☀️', '🌑'];
+  const labels = ['☀ Light', '☾ Dark'];
 
-  const updateIcon = () => {
-    switcherBtn.innerHTML = `<div class="xp-toggle-thumb">${icons[currentThemeIdx]}</div>`;
+  const updateLabel = () => {
+    switcherBtn.textContent = labels[currentThemeIdx];
   };
 
-  updateIcon();
+  updateLabel();
 
   switcherBtn.addEventListener('click', () => {
     currentThemeIdx = (currentThemeIdx + 1) % themes.length;
     const newTheme = themes[currentThemeIdx];
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('portfolio-theme', newTheme);
-    updateIcon();
+    updateLabel();
   });
 }
 
-/**
- * Initializes the CRT Monitor On/Off toggle.
- */
-function initCrtConfig() {
-  const crt = document.querySelector('.crt-overlay');
-  if (!crt) return;
-
-  // Baca state tersimpan — default: on
-  let enabled = localStorage.getItem('crt-enabled') !== 'false';
-
-  function applyState() {
-    if (enabled) {
-      crt.classList.remove('crt-off');
-    } else {
-      crt.classList.add('crt-off');
-    }
-  }
-
-  // Terapkan saat load
-  applyState();
-
-  // Bind tombol kalau ada di halaman ini
-  const btnOn  = document.getElementById('crt-on');
-  const btnOff = document.getElementById('crt-off');
-
-  if (btnOn && btnOff) {
-    function updateActive() {
-      btnOn.classList.toggle('active', enabled);
-      btnOff.classList.toggle('active', !enabled);
-    }
-
-    updateActive();
-
-    btnOn.addEventListener('click', () => {
-      enabled = true;
-      localStorage.setItem('crt-enabled', 'true');
-      applyState();
-      updateActive();
-    });
-
-    btnOff.addEventListener('click', () => {
-      enabled = false;
-      localStorage.setItem('crt-enabled', 'false');
-      applyState();
-      updateActive();
-    });
-  }
-}
+/* CRT config removed — not used in new design */
 
 const skillCategories = [
   {
@@ -798,69 +698,76 @@ const skillCategories = [
 ];
 
 /**
- * Renders and handles interactions in the Skills Tabbed Device Manager page.
+ * Renders the Skills page with the new card-grid design.
+ * Each skill is a clickable card that reveals a detail panel.
  */
 function initSkills() {
-  const deviceList = document.getElementById('device-list');
-  if (!deviceList) return;
+  const gridContainer = document.getElementById('device-list');
+  if (!gridContainer) return;
 
-  const tabBtnFrontend = document.getElementById('tab-btn-frontend');
-  const tabBtnBackend = document.getElementById('tab-btn-backend');
+  const tabBtnFrontend    = document.getElementById('tab-btn-frontend');
+  const tabBtnBackend     = document.getElementById('tab-btn-backend');
   const tabBtnMethodology = document.getElementById('tab-btn-methodology');
 
   const detailsTitle = document.getElementById('skill-details-title');
-  const detailsIcon = document.getElementById('skill-details-icon');
-  const detailsDesc = document.getElementById('skill-details-desc');
+  const detailsIcon  = document.getElementById('skill-details-icon');
+  const detailsDesc  = document.getElementById('skill-details-desc');
+  const levelFill    = document.getElementById('skill-level-fill');
 
-  let activeCategoryIndex = 0; // default to Front-End
+  let activeCategoryIndex = 0;
 
   function renderCategorySkills() {
-    deviceList.innerHTML = '';
+    gridContainer.innerHTML = '';
     const category = skillCategories[activeCategoryIndex];
 
     category.skills.forEach(skill => {
-      const li = document.createElement('li');
-      li.innerHTML = `⚡ <span>${skill.name}</span>`;
-      li.style.cursor = 'pointer';
-      li.style.padding = '4px 6px';
-      
-      li.onclick = () => {
-        // Toggle selected styling
-        deviceList.querySelectorAll('li').forEach(item => item.classList.remove('selected-item'));
-        li.classList.add('selected-item');
+      const card = document.createElement('div');
+      card.className = 'skill-card';
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.innerHTML = `
+        <div class="skill-card-icon">${skill.icon}</div>
+        <div class="skill-card-name">${skill.name}</div>
+      `;
 
-        // Populate skill details panel
-        if (detailsTitle) detailsTitle.textContent = `${skill.name}`;
-        if (detailsIcon) detailsIcon.innerHTML = skill.icon;
-        if (detailsDesc) detailsDesc.textContent = skill.desc;
+      const selectSkill = () => {
+        gridContainer.querySelectorAll('.skill-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+
+        if (detailsTitle) detailsTitle.textContent = skill.name;
+        if (detailsIcon)  detailsIcon.innerHTML    = skill.icon;
+        if (detailsDesc)  detailsDesc.textContent  = skill.desc;
+        if (levelFill) {
+          levelFill.style.width = '0%';
+          setTimeout(() => { levelFill.style.width = skill.level + '%'; }, 50);
+        }
       };
 
-      deviceList.appendChild(li);
+      card.onclick = selectSkill;
+      card.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectSkill(); } };
+      gridContainer.appendChild(card);
     });
 
-    // Reset panel ke state awal
-    if (detailsTitle) detailsTitle.textContent = 'Skill Details';
-    if (detailsIcon) detailsIcon.innerHTML = '🔍';
-    if (detailsDesc) detailsDesc.textContent = 'Pilih skill dari list di atas untuk lihat deskripsi dan level.';
+    // Reset detail panel
+    if (detailsTitle) detailsTitle.textContent = 'Select a skill';
+    if (detailsIcon)  detailsIcon.innerHTML    = '◎';
+    if (detailsDesc)  detailsDesc.textContent  = 'Choose a skill from the grid above to see a detailed description and proficiency level.';
+    if (levelFill)    levelFill.style.width     = '0%';
   }
 
   function setActiveTab(index, clickedBtn) {
     activeCategoryIndex = index;
-    
-    // Reset aria-selected state for tab buttons
     [tabBtnFrontend, tabBtnBackend, tabBtnMethodology].forEach(btn => {
       if (btn) btn.setAttribute('aria-selected', 'false');
     });
     if (clickedBtn) clickedBtn.setAttribute('aria-selected', 'true');
-
     renderCategorySkills();
   }
 
-  if (tabBtnFrontend) tabBtnFrontend.onclick = () => setActiveTab(0, tabBtnFrontend);
-  if (tabBtnBackend) tabBtnBackend.onclick = () => setActiveTab(1, tabBtnBackend);
+  if (tabBtnFrontend)    tabBtnFrontend.onclick    = () => setActiveTab(0, tabBtnFrontend);
+  if (tabBtnBackend)     tabBtnBackend.onclick     = () => setActiveTab(1, tabBtnBackend);
   if (tabBtnMethodology) tabBtnMethodology.onclick = () => setActiveTab(2, tabBtnMethodology);
 
-  // Initial render
   renderCategorySkills();
 }
 
