@@ -1,6 +1,12 @@
-/* ========================================
-   Engineer's Field Notes — Portfolio JS
-   ======================================== */
+/**
+ * bilgrandov.lab — Client Application Controller
+ * 
+ * Main JavaScript controller handling dynamic routing, Supabase data fetching,
+ * theme persistence, project archiving, interactive skill matrix, and guestbook state.
+ *
+ * @author Bilgrandov
+ * @license MIT
+ */
 
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
@@ -15,7 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * Escapes HTML special characters to prevent XSS.
+ * Escapes special HTML characters in a string to prevent XSS attacks.
+ *
+ * @param {string} str - Raw input string to escape
+ * @returns {string} Escaped HTML string
  */
 function escapeHTML(str) {
   if (!str) return '';
@@ -31,7 +40,9 @@ function escapeHTML(str) {
 }
 
 /**
- * Formats the current date as "YYYY-MM-DD HH:MM".
+ * Formats the current local date and time as "YYYY-MM-DD HH:MM".
+ *
+ * @returns {string} Formatted timestamp string
  */
 function formatNow() {
   const now = new Date();
@@ -43,7 +54,7 @@ function formatNow() {
 }
 
 /**
- * Initializes the mobile hamburger navigation.
+ * Initializes mobile navigation drawer and hamburger toggle states.
  */
 function initNav() {
   const hamburger = document.getElementById('nav-hamburger');
@@ -69,7 +80,7 @@ function initNav() {
 
   if (overlay) overlay.addEventListener('click', closeNav);
 
-  // Close nav when a link is clicked on mobile
+  // Auto-close mobile drawer upon navigation link click
   sideNav.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', () => {
       if (window.innerWidth <= 768) closeNav();
@@ -78,7 +89,7 @@ function initNav() {
 }
 
 /**
- * Sets the header date to today's formatted date.
+ * Renders formatted current date into designated header elements.
  */
 function initHeaderDate() {
   const els = document.querySelectorAll('#header-date');
@@ -88,8 +99,7 @@ function initHeaderDate() {
 }
 
 /**
- * Initializes the nav clock.
- * Updates the time every 30 seconds.
+ * Initializes taskbar clock widget with periodic interval updates.
  */
 function initClock() {
   const el = document.getElementById('taskbar-clock');
@@ -104,14 +114,13 @@ function initClock() {
   setInterval(update, 10000);
 }
 
-/**
- * Initializes the stat counter animation on the homepage.
- * Uses IntersectionObserver to trigger animation when scrolled into view.
- */
+/* Global state for cached datasets */
 let allProjectsData = null;
 
 /**
- * Fetches projects and caches them in sessionStorage.
+ * Ensures project database records are loaded, prioritizing sessionStorage cache.
+ *
+ * @returns {Promise<Array>} Resolved array of project objects
  */
 async function ensureProjectsFetched() {
   if (allProjectsData) return allProjectsData;
@@ -138,21 +147,22 @@ async function ensureProjectsFetched() {
   return allProjectsData || [];
 }
 
+/**
+ * Animates key numerical statistics when scrolled into the viewport.
+ */
 async function initStatCounters() {
   const stats = document.querySelectorAll('.stat-num[data-count]');
   if (!stats.length) return;
 
-  // Dynamically fetch projects count from cached JSON database
   try {
     const projects = await ensureProjectsFetched();
-    // Update by data-count attribute on Projects labels
     stats.forEach(el => {
       const label = el.closest('.stat-item')?.querySelector('.stat-label')?.textContent?.trim().toLowerCase();
       if (label && label.includes('project')) {
         el.setAttribute('data-count', projects.length);
       }
     });
-    // Also update stat-projects by ID if present
+
     const statProjects = document.getElementById('stat-projects');
     if (statProjects) {
       statProjects.setAttribute('data-count', projects.length);
@@ -164,20 +174,26 @@ async function initStatCounters() {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        const target = parseInt(entry.target.dataset.count);
+        const target = parseInt(entry.target.dataset.count, 10);
         animateCount(entry.target, target);
         observer.unobserve(entry.target);
       }
     });
   }, { threshold: 0.5 });
+
   stats.forEach(s => observer.observe(s));
-  // Also observe stat-projects by ID
   const statProjects = document.getElementById('stat-projects');
   if (statProjects && !statProjects.dataset.count) {
     observer.observe(statProjects);
   }
 }
 
+/**
+ * Incrementally animates an element's text content up to a target number.
+ *
+ * @param {HTMLElement} el - Target element to update
+ * @param {number} target - Final numerical value
+ */
 function animateCount(el, target) {
   let current = 0;
   const inc = Math.max(1, Math.floor(target / 50));
@@ -188,18 +204,18 @@ function animateCount(el, target) {
   }, 30);
 }
 
-/* --- Journaling & Blog --- */
+/* Global state for blog posts */
 let allPostsData = [];
 
 /**
- * Fetches blog posts from Supabase database.
- * Sorts them in descending order by creation date.
- * Implements SessionStorage caching and handles database connection errors with an XP style modal.
+ * Fetches blog posts from the Supabase REST API in descending date order.
+ * Implements sessionStorage caching and error dialog handling on failure.
+ *
+ * @returns {Promise<void>}
  */
 async function ensurePostsFetched() {
   if (allPostsData.length > 0) return;
 
-  // Caching: Coba baca dari sessionStorage
   const cached = sessionStorage.getItem('techcorner_posts_cache');
   if (cached) {
     try {
@@ -225,19 +241,17 @@ async function ensurePostsFetched() {
 
     const data = await response.json();
 
-    // Map Supabase schema ke format yang dipakai portfolio
+    // Map database schema to internal client model
     allPostsData = data.map(post => ({
       id:      post.id,
       type:    post.type,
       title:   post.title,
       content: post.content || '',
-      // Format created_at (ISO) → "2026-07-05 10:30"
       date:    post.created_at
                  ? post.created_at.slice(0, 16).replace('T', ' ')
                  : ''
     }));
 
-    // Simpan ke cache sessionStorage
     sessionStorage.setItem('techcorner_posts_cache', JSON.stringify(allPostsData));
 
   } catch (err) {
@@ -251,7 +265,10 @@ async function ensurePostsFetched() {
 }
 
 /**
- * Renders a clean error dialog when Supabase connection fails.
+ * Displays a styled modal dialog for unexpected database connectivity failures.
+ *
+ * @param {string} title - Error modal header title
+ * @param {string} message - Descriptive error body message
  */
 function showXPErrorDialog(title, message) {
   if (document.getElementById('xp-error-modal')) return;
@@ -264,8 +281,8 @@ function showXPErrorDialog(title, message) {
     <div class="error-dialog">
       <div class="error-dialog-icon">⚠️</div>
       <div class="error-dialog-text">
-        <strong>${title}</strong>
-        <p>${message}</p>
+        <strong>${escapeHTML(title)}</strong>
+        <p>${escapeHTML(message)}</p>
       </div>
       <button class="btn btn-outline btn-sm error-ok-btn">OK</button>
     </div>
@@ -278,10 +295,8 @@ function showXPErrorDialog(title, message) {
   document.body.appendChild(overlay);
 }
 
-
 /**
- * Initializes the post explorer interface on the posts.html page.
- * Handles the rendering of the category tree and individual content panes.
+ * Initializes the post explorer interface, search filtering, and single post markdown viewer.
  */
 async function initPosts() {
   const treeEl = document.getElementById('posts-tree');
@@ -307,7 +322,7 @@ async function initPosts() {
         treeEl.appendChild(folder);
         posts.forEach(p => {
           const li = document.createElement('li');
-          li.className = 'posts-tree-item'; // ← apply CSS cursor:pointer
+          li.className = 'posts-tree-item';
           li.textContent = `📄 ${p.title}`;
           li.setAttribute('data-post-id', p.id);
           li.setAttribute('tabindex', '0');
@@ -324,7 +339,7 @@ async function initPosts() {
       }
     });
 
-    // Tampilkan pesan jika hasil kosong
+    // Display fallback indicator when search returns empty
     if (filtered.length === 0 && query) {
       const li = document.createElement('li');
       li.style.color = 'var(--text-muted, #888)';
@@ -344,7 +359,7 @@ async function initPosts() {
     const singleView = document.getElementById('single-post-view');
     const idxList = document.getElementById('index-posts-list');
 
-    // Render index list
+    // Populate index view list if empty
     if (idxList && idxList.children.length === 0) {
       idxList.innerHTML = '';
       const cats = ['JOURNAL', 'BLOG', 'CP'];
@@ -358,7 +373,6 @@ async function initPosts() {
 
           posts.forEach(p => {
             const item = document.createElement('div');
-            // Use CSS class — no hardcoded color so dark mode works
             item.className = 'post-index-item';
             item.setAttribute('tabindex', '0');
             item.setAttribute('role', 'button');
@@ -367,7 +381,7 @@ async function initPosts() {
                 <span class="post-cat-badge post-cat-${p.type.toUpperCase()}">${p.type.toUpperCase()}</span>
                 <div class="post-index-title">${escapeHTML(p.title)}</div>
               </div>
-              <div class="post-index-meta">${p.date}</div>`;
+              <div class="post-index-meta">${escapeHTML(p.date)}</div>`;
             item.onclick = () => window.location.hash = `post-${p.id}`;
             item.onkeydown = (e) => {
               if (e.key === 'Enter' || e.key === ' ') {
@@ -381,7 +395,7 @@ async function initPosts() {
       });
     }
 
-    // Highlight selected tree node
+    // Highlight active tree item
     if (treeEl) {
       treeEl.querySelectorAll('li').forEach(item => {
         const postId = item.getAttribute('data-post-id');
@@ -420,7 +434,7 @@ async function initPosts() {
         setTimeout(() => { singleView.style.opacity = '1'; }, 10);
       }
 
-      // Fix #1: Reset scroll ke atas setiap kali buka post baru
+      // Reset scroll position to top on post change
       const explorerContent = document.getElementById('post-viewer');
       if (explorerContent) explorerContent.scrollTop = 0;
 
@@ -434,42 +448,37 @@ async function initPosts() {
       if (catEl) catEl.textContent = post.type.toUpperCase();
 
       if (contentEl) {
-        // Fix #2: renderText dengan retry — tunggu marked siap sebelum fallback ke plain text
         const renderText = (text) => {
           if (typeof marked !== 'undefined') {
             contentEl.innerHTML = marked.parse(text);
           } else {
-            // marked dari CDN belum ready — coba lagi setelah 300ms
+            // Retry marked parsing if CDN script is still initializing
             setTimeout(() => {
               if (typeof marked !== 'undefined') {
                 contentEl.innerHTML = marked.parse(text);
               } else {
-                // CDN gagal total — tampil sebagai plain text
                 contentEl.innerText = text;
               }
             }, 300);
           }
         };
 
-        // Check if the post utilizes an external .md file
         if (post.file) {
           contentEl.innerHTML = '<p class="loading-text">Loading article...</p>';
-
-          fetch(post.file) // Fetch the external markdown file
+          fetch(post.file)
             .then(response => response.text())
             .then(text => renderText(text))
-            .catch(err => {
+            .catch(() => {
               contentEl.innerHTML = '<p class="loading-text">Failed to load article 😢</p>';
             });
         } else {
-          // Fallback to legacy system (inline content from posts.json)
           renderText(post.content);
         }
       }
-
     }
   }
-  // Setup Navigation Buttons
+
+  // Bind pagination controls
   const btnHome = document.getElementById('nav-home');
   const btnPrev = document.getElementById('nav-prev');
   const btnNext = document.getElementById('nav-next');
@@ -489,15 +498,14 @@ async function initPosts() {
         window.location.hash = `post-${allPostsData[newIdx].id}`;
       }
     };
-    if (btnPrev) btnPrev.addEventListener('click', () => navigate(1)); // +1 is older post because sorted by date desc
-    if (btnNext) btnNext.addEventListener('click', () => navigate(-1)); // -1 is newer post
+    if (btnPrev) btnPrev.addEventListener('click', () => navigate(1));
+    if (btnNext) btnNext.addEventListener('click', () => navigate(-1));
   }
 
   renderTree();
   renderContentpane();
   window.addEventListener('hashchange', renderContentpane);
 
-  // Search handler
   const searchInput = document.getElementById('post-search');
   if (searchInput) {
     searchInput.addEventListener('input', () => {
@@ -507,8 +515,7 @@ async function initPosts() {
 }
 
 /**
- * Initializes the latest posts teaser widget on the homepage.
- * Displays the two most recent posts fetched from the JSON database.
+ * Initializes the homepage latest posts teaser widget.
  */
 async function initLatestPostsTeaser() {
   const container = document.getElementById('latest-posts-container');
@@ -516,13 +523,11 @@ async function initLatestPostsTeaser() {
 
   await ensurePostsFetched();
 
-  // Update "Posts Written" stat counter on homepage
   const statPosts = document.getElementById('stat-posts');
   if (statPosts) {
     animateCount(statPosts, allPostsData.length);
   }
 
-  // Update header post count (posts.html)
   const headerPostCount = document.getElementById('post-count');
   if (headerPostCount) headerPostCount.textContent = allPostsData.length;
 
@@ -538,22 +543,19 @@ async function initLatestPostsTeaser() {
         <span class="post-cat-badge post-cat-${p.type.toUpperCase()}">${p.type.toUpperCase()}</span>
         <div class="latest-post-title">${escapeHTML(p.title)}</div>
       </div>
-      <div class="latest-post-meta">${p.date}</div>
+      <div class="latest-post-meta">${escapeHTML(p.date)}</div>
     `;
     div.style.cursor = 'pointer';
     div.onclick = () => { window.location.href = `posts.html#post-${p.id}`; };
     container.appendChild(div);
   });
-  // Also update footer count
+
   const footerCount = document.getElementById('post-count-footer');
   if (footerCount) footerCount.textContent = allPostsData.length;
 }
 
-
-
 /**
- * Initializes the theme switcher toggle (Light/Dark mode).
- * Persists the user's preference in localStorage.
+ * Initializes Light/Dark theme switcher with localStorage persistence.
  */
 function initThemeSwitcher() {
   const themes = ['default', 'dark'];
@@ -582,13 +584,11 @@ function initThemeSwitcher() {
   });
 }
 
-/* CRT config removed — not used in new design */
-
+/* Global state for skills dataset */
 let allSkillsData = null;
 
 /**
- * Renders the Skills page with the new card-grid design.
- * Each skill is a clickable card that reveals a detail panel.
+ * Initializes the skills tab switcher and dynamic grid card renderer.
  */
 async function initSkills() {
   const gridContainer = document.getElementById('device-list');
@@ -605,7 +605,6 @@ async function initSkills() {
 
   let activeCategoryIndex = 0;
 
-  // Caching: read from sessionStorage
   const cached = sessionStorage.getItem('techcorner_skills_cache');
   if (cached) {
     try {
@@ -643,7 +642,7 @@ async function initSkills() {
       card.setAttribute('tabindex', '0');
       card.innerHTML = `
         <div class="skill-card-icon">${skill.icon}</div>
-        <div class="skill-card-name">${skill.name}</div>
+        <div class="skill-card-name">${escapeHTML(skill.name)}</div>
       `;
 
       const selectSkill = () => {
@@ -664,7 +663,7 @@ async function initSkills() {
       gridContainer.appendChild(card);
     });
 
-    // Reset detail panel
+    // Reset detail pane selection state
     if (detailsTitle) detailsTitle.textContent = 'Select a skill';
     if (detailsIcon)  detailsIcon.innerHTML    = '◎';
     if (detailsDesc)  detailsDesc.textContent  = 'Choose a skill from the grid above to see a detailed description and proficiency level.';
@@ -688,7 +687,7 @@ async function initSkills() {
 }
 
 /**
- * Handles guestbook message logic, persistence using localStorage.
+ * Handles guestbook submission and client-side localStorage persistence.
  */
 function initGuestbook() {
   const submitBtn = document.getElementById('guestbook-submit');
@@ -701,8 +700,8 @@ function initGuestbook() {
 
   try {
     messages = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-      { name: "Anonymous Recruiter", text: "Love the Windows XP theme! Super nostalgic and clean.", date: "2026-06-12 10:15" },
-      { name: "Fellow Dev", text: "Nice vanilla JS details. Good luck with the job search! 🚀", date: "2026-06-15 14:02" }
+      { name: "Anonymous Recruiter", text: "Love the clean design & vanilla JS details! Super clean.", date: "2026-06-12 10:15" },
+      { name: "Fellow Dev", text: "Nice portfolio architecture. Good luck with the job search! 🚀", date: "2026-06-15 14:02" }
     ];
   } catch (e) {
     messages = [];
@@ -714,7 +713,7 @@ function initGuestbook() {
       messagesEl.innerHTML = '<p style="font-size: 11px; color: #888; text-align: center; margin-top: 20px;">No messages yet. Be the first to sign! ✒️</p>';
       return;
     }
-    // Render newest first
+
     messages.slice().reverse().forEach(msg => {
       const card = document.createElement('div');
       card.className = 'guestbook-msg';
@@ -733,8 +732,7 @@ function initGuestbook() {
     if (!text) return alert("Please write a message before signing!");
     
     const dateStr = formatNow();
-
-    const names = ["Vibe Checker", "Tech Enthusiast", "Cool Recruiter", "Retro Lover", "Internet Explorer Fan", "Coffee Addict"];
+    const names = ["Vibe Checker", "Tech Enthusiast", "Cool Recruiter", "Retro Lover", "Coffee Addict"];
     const randomName = names[Math.floor(Math.random() * names.length)];
 
     messages.push({

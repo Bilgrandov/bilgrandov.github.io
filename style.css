@@ -1,15 +1,10 @@
 /**
  * style.css
- * "Engineer's Field Notes" — Bilgrandov's Portfolio Design System
+ * Bilgrandov Portfolio — Central Design System & Theme Tokens
  *
- * Concept: A backend engineer's working notebook. Cream paper, ink accents,
- * monospace metadata, handwritten highlights. Professional meets personal.
- *
- * Fonts:
- *   Syne        — display, bold headings
- *   Inter       — body text, UI
- *   Caveat      — handwritten annotations / accents
- *   Space Mono  — metadata, labels, code
+ * Visual System: Minimalist Software Engineer Portfolio
+ * Typography: Syne (Display), Caveat (Handwritten Accent), Inter (Body), Space Mono (Code/Metadata)
+ * Color Tokens: Cream/Slate Palette with Pen Accent
  */
 
 /* =============================================
