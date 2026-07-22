@@ -18,7 +18,25 @@ document.addEventListener('DOMContentLoaded', () => {
   initThemeSwitcher();
   initSkills();
   initGuestbook();
+  initServiceWorker();
 });
+
+/**
+ * Registers the Service Worker for Progressive Web App (PWA) capabilities.
+ */
+function initServiceWorker() {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then((reg) => {
+          console.log('Service Worker registered successfully:', reg.scope);
+        })
+        .catch((err) => {
+          console.warn('Service Worker registration failed:', err);
+        });
+    });
+  }
+}
 
 /**
  * Escapes special HTML characters in a string to prevent XSS attacks.
