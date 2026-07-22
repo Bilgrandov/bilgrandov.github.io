@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
   ~ projects.html
-  ~ Project archive — Engineer's Field Notes
+  ~ Project archive | Engineer's Field Notes
   -->
 <html lang="en" data-theme="default">
 
@@ -9,13 +9,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Bilgrandov's portfolio projects: fullstack web apps built with Laravel, PHP, and JavaScript. Includes live links, tech stacks, and a downloadable PDF export.">
-  <meta property="og:title" content="Bilgrandov — Project Archive">
+  <meta property="og:title" content="Bilgrandov | Projects">
   <meta property="og:description" content="Active blueprints and archives. Selected projects pulled from the desk.">
   <meta property="og:image" content="https://bilgrandov.github.io/assets/profile.jpg">
   <meta property="og:url" content="https://bilgrandov.github.io/projects.html">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#e8650a">
-  <title>Bilgrandov — Project Archive</title>
+  <title>Bilgrandov | Projects</title>
     <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -122,7 +122,7 @@
       </main>
 
       <footer class="page-footer">
-        <span>Project archive — more coming soon</span>
+        <span>Project archive | more coming soon</span>
         <span style="font-family: var(--font-hand); font-size: 14px; color: var(--orange);">building things 🔧</span>
       </footer>
     </div>
@@ -390,7 +390,7 @@
               // Shadow
               doc.setFillColor(45,58,58);
               doc.rect(tagX+1,leftY+1,bW,bH,'F');
-              // Tag fill — setFillColor requires 3 separate r,g,b args (NOT an array)
+              // Tag fill | setFillColor requires 3 separate r,g,b args (NOT an array)
               const isWip = t==='ONGOING' || (p.category||'').includes('Progress');
               if (isWip) { doc.setFillColor(255,235,204); }
               else       { doc.setFillColor(255,255,255); }
@@ -417,7 +417,7 @@
           }
           doc.setDrawColor(45,58,58); doc.setLineWidth(0.3); doc.setLineDashPattern([2,2],0); doc.line(32,194,283,194); doc.setLineDashPattern([],0);
           doc.setFontSize(8); doc.setTextColor(45,58,58);
-          doc.text("Compiled by Bilgrandov's Tech Corner — Project Scrapbook",32,201);
+          doc.text("Compiled by Bilgrandov's Tech Corner | Project Scrapbook",32,201);
           doc.text(`PAGE ${i+1} OF ${window.portfolioProjects.length}`,262,201);
         }
         doc.save('Bilgrandov_Project_Scrapbook.pdf');

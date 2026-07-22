@@ -415,8 +415,9 @@ a:hover {
 }
 
 .doc-eyebrow::before {
-  content: '—';
-  color: var(--border-strong);
+  content: '|';
+  color: var(--orange);
+  font-weight: 700;
 }
 
 .doc-heading {
